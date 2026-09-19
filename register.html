@@ -7,45 +7,64 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:#0f172a;color:#fff;font-family:sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:16px}
-.card{background:#1e293b;width:100%;max-width:400px;border-radius:16px;padding:24px;box-shadow:0 10px 30px rgba(0,0,0,.4)}
-h2{text-align:center;margin-bottom:8px}.sub{text-align:center;opacity:.6;font-size:13px;margin-bottom:20px}
+.card{background:#1e293b;width:100%;max-width:400px;border-radius:16px;padding:24px}
+h2{text-align:center} .sub{text-align:center;opacity:.6;font-size:13px;margin:8px 0 20px}
 label{font-size:12px;opacity:.7;margin:12px 0 4px;display:block}
-input{width:100%;padding:12px;border-radius:8px;border:1px solid #334155;background:#0f172a;color:#fff;outline:none}
-input:focus{border-color:#6366f1}
-.btn{width:100%;padding:12px;border:0;border-radius:8px;background:#6366f1;color:#fff;font-weight:600;margin-top:16px;cursor:pointer}
-.btn2{width:100%;padding:12px;border:1px solid #334155;border-radius:8px;background:transparent;color:#fff;margin-top:10px;cursor:pointer}
-.err{color:#f87171;font-size:12px;margin-top:8px;text-align:center;display:none;background:#450a0a;padding:8px;border-radius:6px}
+input{width:100%;padding:12px;border-radius:8px;border:1px solid #334155;background:#0f172a;color:#fff}
+.btn{width:100%;padding:12px;border:0;border-radius:8px;background:#6366f1;color:#fff;font-weight:700;margin-top:16px}
+.btn2{width:100%;padding:12px;border:1px solid #334155;border-radius:8px;background:transparent;color:#fff;margin-top:10px}
+#log{margin-top:12px;background:#000;color:#4ade80;padding:8px;border-radius:6px;font-size:11px;white-space:pre-wrap}
 </style>
 </head>
 <body>
 <div class="card">
 <h2>Create Account</h2><p class="sub">School Register - EduVerse</p>
-<label>Full Name</label><input id="name" placeholder="Daud Example">
-<label>Email</label><input id="email" type="email" placeholder="student@school.com">
-<label>Phone</label><input id="phone" type="tel" placeholder="08012345678">
-<label>Password</label><input id="password" type="password" placeholder="Min 6 chars">
-<label>Expiry / Matric Year</label><input id="expiry" type="date">
+<label>Full Name</label><input id="name" value="Abdulsalam Daud">
+<label>Email</label><input id="email" type="email" value="daudnew2026@gmail.com">
+<label>Phone</label><input id="phone" value="09027398199">
+<label>Password</label><input id="password" type="password" value="123456">
+<label>Expiry / Matric Year</label><input id="expiry" type="date" value="2026-09-30">
 <button class="btn" id="registerBtn">Create Account</button>
 <button class="btn2" onclick="location.href='login.html'">Already have account? Login</button>
-<p class="err" id="error"></p>
+<div id="log">Ready... Tap Create Account</div>
 </div>
 <script type="module">
-import { auth, db } from './src/firebase.js';
-import { createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 const $=id=>document.getElementById(id);
-const showErr=m=>{ const e=$('error'); e.style.display='block'; e.innerText=m; };
+const log=m=>{ $('log').innerText+='\n'+m; console.log(m); };
+const firebaseConfig = {
+  apiKey: "AIzaSyBu37fV7AVatgXsA9YVbJQHELEMeCAfBhA",
+  authDomain: "eduverse-a1d66.firebaseapp.com",
+  projectId: "eduverse-a1d66",
+  storageBucket: "eduverse-a1d66.firebasestorage.app",
+  messagingSenderId: "657029326378",
+  appId: "1:657029326378:web:662a4302b2a6f8af5e0553"
+};
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getFirestore(app);
+log('Firebase OK - Ready');
 $('registerBtn').onclick=async()=>{
+  log('Button clicked!');
   const name=$('name').value.trim(); const email=$('email').value.trim(); const phone=$('phone').value.trim(); const password=$('password').value; const expiry=$('expiry').value;
-  if(!name||!email||!phone||!password||!expiry){ showErr('Fill all fields'); return; }
-  if(password.length<6){ showErr('Password 6+ chars'); return; }
+  if(!name||!email||!phone||!password||!expiry){ log('Fill all fields'); alert('Fill all'); return; }
   $('registerBtn').innerText='Creating...'; $('registerBtn').disabled=true;
   try{
+    log('Creating user '+email);
     const cred=await createUserWithEmailAndPassword(auth,email,password);
+    log('User created UID:'+cred.user.uid);
     await updateProfile(cred.user,{displayName:name});
-    await setDoc(doc(db,"students",cred.user.uid),{name,email,phone,expiry,createdAt:new Date().toISOString(),uid:cred.user.uid});
-    window.location.href='dashboard.html';
-  }catch(err){ showErr(err.code+' : '+err.message); $('registerBtn').innerText='Create Account'; $('registerBtn').disabled=false; }
+    await setDoc(doc(db,"students",cred.user.uid),{name,email,phone,expiry,createdAt:new Date().toISOString()});
+    log('Saved to Firestore! Going to dashboard');
+    alert('SUCCESS! Account created');
+    location.href='dashboard.html';
+  }catch(e){
+    log('ERROR: '+e.code+' '+e.message);
+    alert(e.code+': '+e.message);
+    $('registerBtn').innerText='Create Account'; $('registerBtn').disabled=false;
+  }
 };
 </script>
 </body>
