@@ -7,51 +7,39 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:#0f172a;color:#fff;font-family:sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:16px}
-.card{background:#1e293b;width:100%;max-width:400px;border-radius:16px;padding:24px;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.card{background:#1e293b;width:100%;max-width:400px;border-radius:16px;padding:24px}
 h2{text-align:center;margin-bottom:8px}
 .sub{text-align:center;opacity:.6;font-size:13px;margin-bottom:20px}
 label{font-size:12px;opacity:.7;margin:12px 0 4px;display:block}
 input{width:100%;padding:12px;border-radius:8px;border:1px solid #334155;background:#0f172a;color:#fff;outline:none}
-input:focus{border-color:#6366f1}
 .btn{width:100%;padding:12px;border:0;border-radius:8px;background:#6366f1;color:#fff;font-weight:600;margin-top:16px;cursor:pointer}
 .btn2{width:100%;padding:12px;border:1px solid #334155;border-radius:8px;background:transparent;color:#fff;margin-top:10px;cursor:pointer}
-a{color:#818cf8;text-decoration:none;font-size:13px}
-.footer{text-align:center;margin-top:16px}
-.err{color:#f87171;font-size:12px;margin-top:8px;text-align:center;display:none}
+.err{color:#f87171;font-size:13px;margin-top:12px;text-align:center;background:#450a0a;padding:8px;border-radius:6px;display:none}
+.ok{color:#4ade80;font-size:13px;margin-top:12px;text-align:center;display:none}
 </style>
 </head>
 <body>
 <div class="card">
 <h2>Create Account</h2>
 <p class="sub">School Register - EduVerse</p>
-
-<label>Full Name</label>
-<input id="name" placeholder="Daud Example">
-
-<label>Email</label>
-<input id="email" type="email" placeholder="student@school.com">
-
-<label>Phone</label>
-<input id="phone" type="tel" placeholder="08012345678">
-
-<label>Password</label>
-<input id="password" type="password" placeholder="Minimum 6 characters">
-
-<label>Expiry / Matric Year</label>
-<input id="expiry" type="date">
-
+<label>Full Name</label><input id="name" placeholder="Daud Example">
+<label>Email</label><input id="email" type="email" placeholder="student@school.com">
+<label>Phone</label><input id="phone" type="tel" placeholder="08012345678">
+<label>Password</label><input id="password" type="password" placeholder="Min 6 chars">
+<label>Expiry / Matric Year</label><input id="expiry" type="date">
 <button class="btn" id="registerBtn">Create Account</button>
 <button class="btn2" onclick="location.href='login.html'">Already have account? Login</button>
 <p class="err" id="error"></p>
+<p class="ok" id="ok"></p>
 </div>
-
 <script type="module">
 import { auth, db } from './src/firebase.js';
 import { createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-const $ = id => document.getElementById(id);
-const showErr = msg => { const e=$('error'); e.style.display='block'; e.innerText=msg; };
+const $=id=>document.getElementById(id);
+const errBox=$('error'); const okBox=$('ok');
+function showErr(m){ errBox.style.display='block'; errBox.innerText=m; okBox.style.display='none'; alert(m); }
+function showOk(m){ okBox.style.display='block'; okBox.innerText=m; errBox.style.display='none'; }
 
 $('registerBtn').onclick = async () => {
   const name=$('name').value.trim();
@@ -59,26 +47,20 @@ $('registerBtn').onclick = async () => {
   const phone=$('phone').value.trim();
   const password=$('password').value;
   const expiry=$('expiry').value;
-
   if(!name || !email || !phone || !password || !expiry){ showErr('Fill all fields'); return; }
   if(password.length<6){ showErr('Password must be 6+ chars'); return; }
-
   $('registerBtn').innerText='Creating...'; $('registerBtn').disabled=true;
-
   try{
     const cred = await createUserWithEmailAndPassword(auth, email, password);
     await updateProfile(cred.user, { displayName: name });
-    
-    // Save extra info to Firestore
-    await setDoc(doc(db, "students", cred.user.uid), {
-      name, email, phone, expiry,
-      createdAt: new Date().toISOString(),
-      uid: cred.user.uid
-    });
-
-    window.location.href='dashboard.html';
+    try{
+      await setDoc(doc(db, "students", cred.user.uid), { name, email, phone, expiry, createdAt: new Date().toISOString(), uid: cred.user.uid });
+    }catch(e){ console.log('Firestore save failed', e); }
+    showOk('Account created! Going to dashboard...');
+    setTimeout(()=>{ window.location.href='dashboard.html'; }, 1000);
   }catch(err){
-    showErr(err.message);
+    console.log(err);
+    showErr(err.code + ' : ' + err.message);
     $('registerBtn').innerText='Create Account'; $('registerBtn').disabled=false;
   }
 };
