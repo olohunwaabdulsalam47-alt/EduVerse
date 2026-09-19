@@ -1,43 +1,96 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>EduVerse - Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard - EduVerse</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}body{background:#0f172a;color:#fff;font-family:sans-serif;padding:16px}.top{display:flex;justify-content:space-between;align-items:center}.card{background:#1e293b;border-radius:12px;padding:16px;margin-top:16px}.btn{background:#6366f1;color:#fff;border:0;padding:10px 16px;border-radius:8px}
+body{font-family:Arial,sans-serif;background:#f5f7fb;margin:0;padding:20px}
+.card{max-width:600px;margin:40px auto;background:#fff;padding:25px;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,0.1)}
+h2{margin-top:0}
+.badge{display:inline-block;padding:6px 12px;border-radius:20px;background:#eef2ff;color:#4338ca;font-weight:bold}
+button{padding:10px 16px;border:none;border-radius:8px;background:#ef4444;color:#fff;cursor:pointer;margin-top:15px}
+.info{margin:15px 0;line-height:1.7}
 </style>
 </head>
 <body>
-<div class="top">
-<h2>EduVerse</h2>
-<button class="btn" id="logout">Logout</button>
-</div>
-<div class="card">
-<h3 id="welcome">Loading...</h3>
-<p id="email" style="opacity:.7;font-size:13px;margin-top:4px"></p>
-</div>
-<div class="card">
-<h4>Quick Actions</h4>
-<button class="btn" onclick="location.href='index.html'" style="margin-top:10px;width:100%">Go to Attendance Check</button>
+
+<div class="card" id="card">
+  <h2>Loading...</h2>
 </div>
 
 <script type="module">
-import { auth } from './src/firebase.js';
-import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-onAuthStateChanged(auth, (user) => {
-  if(!user){ window.location.href = 'login.html'; }
-  else{
-    document.getElementById('welcome').innerText = 'Welcome, ' + (user.displayName || 'Student');
-    document.getElementById('email').innerText = user.email;
+const firebaseConfig = {
+  apiKey: "AIzaSyD5pPj2MD5v2vP7yOu4D1y9Rz5QpQJxF6M",
+  authDomain: "eduverse-a1d66.firebaseapp.com",
+  projectId: "eduverse-a1d66",
+  storageBucket: "eduverse-a1d66.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+
+// USE YOUR REAL CONFIG FROM register.html
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const card = document.getElementById('card');
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    window.location.href = "login.html";
+    return;
+  }
+
+  try {
+    const ref = doc(db, "students", user.uid);
+    const snap = await getDoc(ref);
+
+    if (!snap.exists()) {
+      card.innerHTML = `<h2>Profile not found</h2><p>UID: ${user.uid}</p><button id="logout">Logout</button>`;
+      document.getElementById('logout').onclick = () => signOut(auth);
+      return;
+    }
+
+    const s = snap.data();
+    
+    // FIXED BUG HERE - THIS WAS THE PROBLEM
+    const displayName = s.name || s.schoolName || s.fullName || s.studentName || "Student";
+    const email = s.email || user.email;
+    const expiry = s.expiryDate || s.expiry || "No expiry set";
+
+    card.innerHTML = `
+      <h2>Welcome, ${displayName} 👋</h2>
+      <span class="badge">Verified Student</span>
+      <div class="info">
+        <b>Name:</b> ${displayName}<br>
+        <b>Email:</b> ${email}<br>
+        <b>Phone:</b> ${s.phone || "N/A"}<br>
+        <b>School:</b> ${s.schoolName || s.school || "N/A"}<br>
+        <b>Expiry Date:</b> ${expiry}<br>
+        <b>UID:</b> ${user.uid}
+      </div>
+      <button id="logout">Logout</button>
+      <button id="goLearn" style="background:#4f46e5;margin-left:10px">Go to Learning</button>
+    `;
+
+    document.getElementById('logout').onclick = async () => {
+      await signOut(auth);
+      window.location.href = "login.html";
+    };
+    document.getElementById('goLearn').onclick = () => {
+      window.location.href = "courses.html";
+    };
+
+  } catch (e) {
+    card.innerHTML = `<h2>Error loading data</h2><p>${e.message}</p><button id="logout">Logout</button>`;
+    document.getElementById('logout').onclick = () => signOut(auth);
   }
 });
-
-document.getElementById('logout').onclick = async () => {
-  await signOut(auth);
-  window.location.href = 'login.html';
-};
 </script>
 </body>
 </html>
