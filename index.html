@@ -1,73 +1,75 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EduVerse STEP 2 - Attendance System | CEO Abdulsalam Daud</title>
+<title>EduVerse - Smart School Attendance</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}body{background:#f5f7fb}nav{background:#fff;padding:10px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 8px rgba(0,0,0,.06);position:sticky;top:0;z-index:10;flex-wrap:wrap}.logo{font-weight:900;color:#4f46e5}button.m{padding:6px 10px;border-radius:8px;border:1px solid #4f46e5;background:#fff;color:#4f46e5;font-weight:700;margin:2px;font-size:11px;cursor:pointer}button.m.p{background:#4f46e5;color:#fff}section{display:none;padding:12px;max-width:900px;margin:auto}section.on{display:block}.card{background:#fff;padding:14px;border-radius:12px;box-shadow:0 4px 14px rgba(0,0,0,.06);margin:8px 0}input,select{width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin:5px 0}.btn{width:100%;padding:11px;border:none;border-radius:8px;font-weight:800;margin-top:6px;cursor:pointer}.btn-p{background:#4f46e5;color:#fff}.btn-g{background:#25D366;color:#fff}.row{display:flex;gap:6px}.chip{display:inline-block;padding:4px 8px;border-radius:12px;font-size:10px;margin:2px}.present{background:#dcfce7;color:#166534}.absent{background:#fee2e2;color:#991b1b}.late{background:#fef3c7;color:#92400e}
-table{width:100%;border-collapse:collapse;font-size:12px}th,td{border:1px solid #eee;padding:6px;text-align:left}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}body{background:#f6f7ff}nav{background:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 10px rgba(0,0,0,.06);position:sticky;top:0;z-index:10}.logo{font-weight:900;color:#4f46e5;font-size:16px}.m{padding:7px 12px;border-radius:8px;border:1px solid #4f46e5;background:#fff;color:#4f46e5;font-weight:700;margin:2px;font-size:12px;cursor:pointer}.m.p{background:#4f46e5;color:#fff}section{display:none;padding:14px;max-width:900px;margin:auto}section.on{display:block}.card{background:#fff;padding:16px;border-radius:14px;box-shadow:0 6px 20px rgba(0,0,0,.06);margin:10px 0}input,select{width:100%;padding:11px;border:1px solid #e5e7eb;border-radius:10px;margin:5px 0}.btn{width:100%;padding:12px;border:none;border-radius:10px;font-weight:800;margin-top:6px;cursor:pointer}.btn-p{background:#4f46e5;color:#fff}.btn-g{background:#25D366;color:#fff}.row{display:flex;gap:8px}.chip{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700}.present{background:#dcfce7;color:#166534}.absent{background:#fee2e2;color:#991b1b}.late{background:#fef3c7;color:#92400e}table{width:100%;border-collapse:collapse;font-size:12px}th,td{border:1px solid #f1f5f9;padding:8px;text-align:left}th{background:#f8fafc}
 </style></head><body>
-<nav><div class="logo">🎓 EduVerse STEP 2</div><div><button class="m p" onclick="S('dash')">Attendance</button><button class="m" onclick="S('home')">Home</button><button class="m" onclick="S('pay')">Pay 9027398199</button></div></nav>
+<nav><div class="logo">🎓 EduVerse</div><div><button class="m p" onclick="S('dash')">Dashboard</button><button class="m" onclick="S('pay')">Subscription</button></div></nav>
 
-<section id="home" class="on"><div class="card" style="text-align:center;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff"><h2>MEGA STEP 1 LIVE ✅</h2><p>Your link: https://olohunwaabdulsalam47-alt.github.io/EduVerse/</p><button class="btn" style="background:#fff;color:#4f46e5;max-width:200px" onclick="S('dash')">Go to Attendance System</button></div></section>
+<section id="dash" class="on">
+<div class="card" id="dc" style="background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff">Loading...</div>
 
-<section id="dash"><div class="card" id="dc">Loading...</div>
-
-<!-- 21,25,73 - Attendance Marking + Class + Staff -->
-<div class="card"><h3>21. Mark Attendance (Present/Absent/Late) + 25. Class JSS1-SSS3 + 73. Staff</h3>
-<div class="row"><select id="cls"><option>JSS1</option><option>JSS2</option><option>JSS3</option><option>SSS1</option><option>SSS2</option><option>SSS3</option></select><select id="type"><option value="student">Student</option><option value="staff">Staff Attendance (73)</option></select></div>
-<div class="row"><input id="attName" placeholder="Student/Staff Name"><input id="attPhone" placeholder="Parent Phone for WhatsApp Alert 68"></div>
-<div class="row"><button class="btn btn-p" style="background:#16a34a" onclick="mark('Present')">✅ Present (21)</button><button class="btn btn-p" style="background:#dc2626" onclick="mark('Absent')">❌ Absent</button><button class="btn btn-p" style="background:#d97706" onclick="mark('Late')">⏰ Late</button></div>
-<p style="font-size:10px">22. Saves to Firestore + localStorage auto</p>
+<div class="card">
+<h3>Mark Attendance</h3>
+<div class="row"><select id="cls"><option>JSS1</option><option>JSS2</option><option>JSS3</option><option>SSS1</option><option>SSS2</option><option>SSS3</option><option>Primary 1</option><option>Primary 2</option><option>Primary 3</option><option>Primary 4</option><option>Primary 5</option><option>Primary 6</option></select><select id="type"><option value="Student">Student</option><option value="Staff">Staff</option></select></div>
+<div class="row"><input id="attName" placeholder="Full Name"><input id="attPhone" placeholder="Parent Phone (for absent alert)"></div>
+<div class="row"><button class="btn btn-p" style="background:#16a34a" onclick="mark('Present')">✅ Present</button><button class="btn btn-p" style="background:#dc2626" onclick="mark('Absent')">❌ Absent</button><button class="btn btn-p" style="background:#d97706" onclick="mark('Late')">⏰ Late</button></div>
 </div>
 
-<!-- 23 View History -->
-<div class="card"><h3>23. View Attendance History + Filter</h3><div class="row"><input type="date" id="filterDate"><select id="filterCls"><option value="">All Classes</option><option>JSS1</option><option>JSS2</option><option>JSS3</option><option>SSS1</option><option>SSS2</option><option>SSS3</option></select><button class="m p" onclick="renderAtt()">Filter</button></div>
-<div style="max-height:300px;overflow:auto"><table><thead><tr><th>Name</th><th>Class</th><th>Type</th><th>Status</th><th>Date</th><th>Action</th></tr></thead><tbody id="attBody"></tbody></table></div></div>
+<div class="card">
+<h3>Attendance History</h3>
+<div class="row"><input type="date" id="filterDate"><select id="filterCls"><option value="">All Classes</option><option>JSS1</option><option>JSS2</option><option>JSS3</option><option>SSS1</option><option>SSS2</option><option>SSS3</option></select><button class="m p" onclick="renderAtt()">Filter</button></div>
+<div style="overflow:auto;max-height:350px"><table><thead><tr><th>Name</th><th>Class</th><th>Type</th><th>Status</th><th>Date</th><th>Notify</th></tr></thead><tbody id="attBody"></tbody></table></div>
+<div class="row" style="margin-top:10px"><button class="btn btn-p" style="background:#111" onclick="exportPDF()">📄 Download PDF Report</button><button class="btn btn-g" onclick="sendBulkAbsent()">📲 Send Absent Alerts</button></div>
+</div>
 
-<!-- 24,68 Export PDF + WhatsApp Alert -->
-<div class="card"><h3>24. Export PDF + 68. WhatsApp Alert</h3><div class="row"><button class="btn btn-p" onclick="exportPDF()">📄 Export Attendance to PDF (24)</button><button class="btn btn-g" onclick="sendBulkAbsent()">📲 Bulk Absent WhatsApp Alert (68)</button></div></div>
-
+<div class="card" style="font-size:11px;text-align:center;color:#6b7280">© EduVerse | OPay 9027398199 Aminat Abdulsalam | Support +2348050394277</div>
 </section>
 
-<section id="pay"><div class="card" style="text-align:center"><h2>OPay 9027398199 - Aminat Abdulsalam</h2><p>CEO Abdulsalam Daud | Admin +2348050394277</p><a href="https://wa.me/2348050394277?text=I%20paid%20to%209027398199"><button class="btn btn-p">I Have Paid</button></a></div></section>
+<section id="pay"><div class="card" style="text-align:center;max-width:400px;margin:auto"><h2>Subscription</h2><p style="margin:10px 0">Pay to activate your school account</p><div style="border:1px dashed #cbd5e1;padding:14px;border-radius:10px;text-align:left;background:#f8fafc">Bank: <b>OPay</b><br>Account: <b>9027398199</b><br>Name: <b>Aminat Abdulsalam</b></div><a href="https://wa.me/2348050394277?text=Hello%20I%20paid%20to%20OPay%209027398199"><button class="btn btn-p" style="margin-top:12px">I Have Paid - Activate Me</button></a><button class="btn" onclick="S('dash')" style="background:#e5e7eb">Back to Dashboard</button></div></section>
 
 <script>
 function S(id){document.querySelectorAll('section').forEach(s=>s.classList.remove('on'));document.getElementById(id).classList.add('on');}
 let att=JSON.parse(localStorage.getItem('edu_attendance')||'[]');
-async function mark(status){
- let name=document.getElementById('attName').value, cls=document.getElementById('cls').value, type=document.getElementById('type').value, phone=document.getElementById('attPhone').value, date=new Date().toLocaleDateString(), time=new Date().toLocaleString();
+function mark(status){
+ let name=document.getElementById('attName').value.trim(), cls=document.getElementById('cls').value, type=document.getElementById('type').value, phone=document.getElementById('attPhone').value.trim(), date=new Date().toLocaleDateString(), day=new Date().toISOString().split('T')[0];
  if(!name)return alert('Enter name');
- let record={id:Date.now(),name,class:cls,type,status,date,time,phone,day:new Date().toISOString().split('T')[0]};
- att.push(record);localStorage.setItem('edu_attendance',JSON.stringify(att));
- // 22 Save to Firestore if logged in - will try
- try{if(window.saveToFS)await window.saveToFS(record);}catch(e){}
+ let rec={id:Date.now(),name,class:cls,type,status,date,day,phone,time:new Date().toLocaleString()};
+ att.push(rec);localStorage.setItem('edu_attendance',JSON.stringify(att));
+ try{if(window.saveToFS)window.saveToFS(rec);}catch(e){}
  renderAtt();document.getElementById('attName').value='';
- // 68 Auto WhatsApp if Absent
- if(status==='Absent' && phone){let msg=`ALERT from EduVerse: Your child ${name} (${cls}) was marked ABSENT today ${date}. - ${'Abdulsalam Daud'} - 9027398199`;window.open(`https://wa.me/234${phone.slice(-10)}?text=${encodeURIComponent(msg)}`,'_blank')}
+ if(status==='Absent' && phone){let msg=`Dear Parent, Your child ${name} (${cls}) was marked ABSENT today ${date}. Please contact school if any issue. - EduVerse`;window.open(`https://wa.me/234${phone.slice(-10)}?text=${encodeURIComponent(msg)}`,'_blank')}
 }
 function renderAtt(){
  let fd=document.getElementById('filterDate').value, fc=document.getElementById('filterCls').value;
- let filtered=att; if(fd){let d=new Date(fd).toLocaleDateString(); filtered=filtered.filter(a=>a.date===d||a.day===fd)} if(fc)filtered=filtered.filter(a=>a.class===fc);
- document.getElementById('attBody').innerHTML=filtered.reverse().map(r=>`<tr><td>${r.name}</td><td>${r.class}</td><td>${r.type}</td><td><span class="chip ${r.status.toLowerCase()}">${r.status}</span></td><td>${r.date}</td><td><button class="m" onclick="waAlert('${r.name}','${r.class}','${r.phone||''}')">WA Alert</button></td></tr>`).join('');
+ let f=att.slice(); if(fd){let d=new Date(fd).toLocaleDateString(); f=f.filter(a=>a.day===fd||a.date===d)} if(fc)f=f.filter(a=>a.class===fc);
+ document.getElementById('attBody').innerHTML=f.reverse().map(r=>`<tr><td>${r.name}</td><td>${r.class}</td><td>${r.type}</td><td><span class="chip ${r.status.toLowerCase()}">${r.status}</span></td><td>${r.date}</td><td><button class="m" onclick="wa('${r.name}','${r.class}','${r.phone}')">Alert</button></td></tr>`).join('')||'<tr><td colspan=6 style="text-align:center;color:#999">No records</td></tr>';
 }
-function waAlert(name,cls,phone){if(!phone)return alert('No phone saved - add phone in marking');let msg=`ALERT: Your child ${name} (${cls}) was ABSENT today. Please contact school. - EduVerse CEO Abdulsalam Daud 9027398199`;window.open(`https://wa.me/234${phone.slice(-10)}?text=${encodeURIComponent(msg)}`,'_blank')}
-function exportPDF(){const {jsPDF}=window.jspdf;const doc=new jsPDF();doc.text("EduVerse Attendance - CEO Abdulsalam Daud - 9027398199",10,10);let y=20;att.slice(-30).forEach((r,i)=>{doc.text(`${i+1}. ${r.name} - ${r.class} - ${r.status} - ${r.date}`,10,y);y+=7;if(y>280){doc.addPage();y=10}});doc.save(`Attendance_${new Date().toLocaleDateString()}.pdf`)}
-function sendBulkAbsent(){let today=new Date().toLocaleDateString();let absentToday=att.filter(a=>a.date===today && a.status==='Absent');if(!absentToday.length)return alert('No absent today');if(!confirm(`Send WhatsApp alert to ${absentToday.length} absent students parents?`))return;absentToday.forEach(r=>{if(r.phone){let msg=`ALERT: ${r.name} (${r.class}) ABSENT today ${today}. - EduVerse`;window.open(`https://wa.me/234${r.phone.slice(-10)}?text=${encodeURIComponent(msg)}`,'_blank')}})}
+function wa(n,c,p){if(!p)return alert('No phone number saved');let m=`Dear Parent, ${n} (${c}) was ABSENT today. - EduVerse`;window.open(`https://wa.me/234${p.slice(-10)}?text=${encodeURIComponent(m)}`,'_blank')}
+function exportPDF(){const{jsPDF}=window.jspdf;const doc=new jsPDF();doc.setFontSize(12);doc.text("EduVerse Attendance Report",10,12);doc.setFontSize(9);doc.text(`Date: ${new Date().toLocaleString()} | Support: +2348050394277 | OPay: 9027398199`,10,18);let y=26;att.slice(-40).forEach((r,i)=>{doc.text(`${i+1}. ${r.name} | ${r.class} | ${r.type} | ${r.status} | ${r.date}`,10,y);y+=6;if(y>280){doc.addPage();y=10}});doc.save(`EduVerse_Attendance_${new Date().toISOString().split('T')[0]}.pdf`)}
+function sendBulkAbsent(){let today=new Date().toLocaleDateString();let abs=att.filter(a=>a.date===today && a.status==='Absent');if(!abs.length)return alert('No absent today');if(!confirm(`Send WhatsApp to ${abs.length} parents?`))return;abs.forEach(r=>{if(r.phone)wa(r.name,r.class,r.phone)})}
 renderAtt();
 </script>
 
 <script type="module">
-import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {getAuth,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import {getFirestore,doc,setDoc,getDoc,collection,addDoc} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";import{getAuth,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";import{getFirestore,doc,getDoc,collection,addDoc}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 const firebaseConfig={apiKey:"AIzaSyBu37fV7AVatgXsA9YVbJQHELEMeCAfBhA",authDomain:"eduverse-a1d66.firebaseapp.com",projectId:"eduverse-a1d66",storageBucket:"eduverse-a1d66.firebasestorage.app",messagingSenderId:"657029326378",appId:"1:657029326378:web:662a4302b2a6f8af5e0553",measurementId:"G-RT2GEEH44T"};
 const app=initializeApp(firebaseConfig);const auth=getAuth(app);const db=getFirestore(app);
-window.saveToFS=async(rec)=>{try{await addDoc(collection(db,"attendance"),rec);}catch(e){console.log(e)}};
+window.saveToFS=async(rec)=>{try{await addDoc(collection(db,"attendance"),rec)}catch(e){}};
 onAuthStateChanged(auth,async(u)=>{
  const dc=document.getElementById('dc');
- if(!u){dc.innerHTML=`<b>Login to save to Cloud (22)</b><br>Currently saving to phone only. <br>CEO Abdulsalam Daud - OPay 9027398199`;S('dash');return}
- try{const snap=await getDoc(doc(db,"students",u.uid));const s=snap.data();const name=s.name||s.schoolName||"School";dc.innerHTML=`<h2>Welcome ${name} ✅</h2><p>${s.email} | Expiry: ${s.expiryDate?.slice(0,10)}<br>Steps 21-25,68,73 Inside This Dashboard | Admin +2348050394277</p>`;}catch(e){dc.innerHTML=e.message}
- S('dash');
+ if(!u){dc.innerHTML=`<h3>Welcome Guest</h3><p>Login to sync data to cloud. Currently saving locally.</p>`;return}
+ try{
+  const snap=await getDoc(doc(db,"students",u.uid));
+  if(!snap.exists()){dc.innerHTML=`<h3>Welcome!</h3>`;return}
+  const s=snap.data();
+  const displayName=s.name||s.schoolName||s.displayName||"School";
+  // FIX expiry undefined - check all possible fields
+  let expiry = s.expiryDate || s.expiry || localStorage.getItem('expiry_current') || localStorage.getItem('expiry_'+s.email) || "";
+  let expiryText = expiry? new Date(expiry).toLocaleDateString() : "3 Days Trial";
+  dc.innerHTML=`<h2>Welcome, ${displayName} ✅</h2><p style="margin-top:6px;font-size:13px;opacity:.9">${s.email} | Valid till: ${expiryText}<br>OPay 9027398199 | Support +2348050394277</p>`;
+ }catch(e){dc.innerHTML=`<h3>Welcome</h3><p>${e.message}</p>`}
 });
 </script>
 </body></html>
