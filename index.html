@@ -1,96 +1,73 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EduVerse - Attendance + Redirect | CEO Abdulsalam Daud 9027398199</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduVerse STEP 2 - Attendance System | CEO Abdulsalam Daud</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
-body{background:#f5f7fb} nav{background:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 10px rgba(0,0,0,.06);position:sticky;top:0;z-index:10;flex-wrap:wrap}
-.logo{font-weight:900;color:#4f46e5;font-size:18px} .mbtn{padding:7px 12px;border-radius:8px;border:1px solid #4f46e5;background:#fff;color:#4f46e5;font-weight:700;margin:3px;font-size:11px;cursor:pointer} .mbtn.p{background:#4f46e5;color:#fff}
-section{display:none;padding:14px;max-width:900px;margin:0 auto} section.on{display:block}
-.hero{text-align:center;padding:32px 16px;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;border-radius:16px;margin:10px 0}
-.card{background:#fff;padding:16px;border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,.06);margin:10px 0}
-.btn{width:100%;padding:12px;border:none;border-radius:10px;font-weight:800;margin-top:8px;cursor:pointer} .btn-p{background:#4f46e5;color:#fff} .btn-g{background:#25D366;color:#fff}
-input,select{width:100%;padding:11px;border:1px solid #ddd;border-radius:10px;margin:6px 0} .pay{border:1px dashed #bbb;background:#f9fafb;border-radius:10px;padding:12px;margin:10px 0} footer{text-align:center;padding:16px;font-size:11px;color:#6b7280}
-</style>
-</head>
-<body>
-<nav>
-<div class="logo">🎓 EduVerse | CEO Abdulsalam Daud</div>
-<div style="display:flex;flex-wrap:wrap">
-<button class="mbtn p" onclick="S('home')">Home</button>
-<button class="mbtn" onclick="S('reg')">Register</button>
-<button class="mbtn" onclick="S('login')">Login</button>
-<button class="mbtn" onclick="S('dash')">Dashboard</button>
-<button class="mbtn" onclick="S('pay')">Pay 9027398199</button>
-<button class="mbtn" onclick="S('admin')">Admin YOU</button>
-</div>
-</nav>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}body{background:#f5f7fb}nav{background:#fff;padding:10px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 8px rgba(0,0,0,.06);position:sticky;top:0;z-index:10;flex-wrap:wrap}.logo{font-weight:900;color:#4f46e5}button.m{padding:6px 10px;border-radius:8px;border:1px solid #4f46e5;background:#fff;color:#4f46e5;font-weight:700;margin:2px;font-size:11px;cursor:pointer}button.m.p{background:#4f46e5;color:#fff}section{display:none;padding:12px;max-width:900px;margin:auto}section.on{display:block}.card{background:#fff;padding:14px;border-radius:12px;box-shadow:0 4px 14px rgba(0,0,0,.06);margin:8px 0}input,select{width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin:5px 0}.btn{width:100%;padding:11px;border:none;border-radius:8px;font-weight:800;margin-top:6px;cursor:pointer}.btn-p{background:#4f46e5;color:#fff}.btn-g{background:#25D366;color:#fff}.row{display:flex;gap:6px}.chip{display:inline-block;padding:4px 8px;border-radius:12px;font-size:10px;margin:2px}.present{background:#dcfce7;color:#166534}.absent{background:#fee2e2;color:#991b1b}.late{background:#fef3c7;color:#92400e}
+table{width:100%;border-collapse:collapse;font-size:12px}th,td{border:1px solid #eee;padding:6px;text-align:left}
+</style></head><body>
+<nav><div class="logo">🎓 EduVerse STEP 2</div><div><button class="m p" onclick="S('dash')">Attendance</button><button class="m" onclick="S('home')">Home</button><button class="m" onclick="S('pay')">Pay 9027398199</button></div></nav>
 
-<section id="home" class="on">
-<div class="hero">
-<h1>MEGA STEP 1 DONE ✅ - EduVerse</h1>
-<p>Attendance Check + Redirect + Firebase + Login + Register + Dashboard FIXED</p>
-<p><b>OPay: 9027398199 - Aminat Abdulsalam | Admin: +2348050394277</b></p>
-<button class="btn" style="max-width:240px;background:#fff;color:#4f46e5" onclick="S('reg')">Create School Free (Step 6)</button>
-<button class="btn" style="max-width:240px;background:#111;color:#fff" onclick="S('pay')">Pay ₦20k/term (Step 9)</button>
-<br><span style="background:#eef2ff;color:#4f46e5;padding:6px 12px;border-radius:20px;font-size:11px;font-weight:800;margin-top:10px;display:inline-block">Logo(13) + Responsive(14) + Favicon(15) + PWA manifest(16) + Footer CEO Abdulsalam(17) = DONE</span>
+<section id="home" class="on"><div class="card" style="text-align:center;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff"><h2>MEGA STEP 1 LIVE ✅</h2><p>Your link: https://olohunwaabdulsalam47-alt.github.io/EduVerse/</p><button class="btn" style="background:#fff;color:#4f46e5;max-width:200px" onclick="S('dash')">Go to Attendance System</button></div></section>
+
+<section id="dash"><div class="card" id="dc">Loading...</div>
+
+<!-- 21,25,73 - Attendance Marking + Class + Staff -->
+<div class="card"><h3>21. Mark Attendance (Present/Absent/Late) + 25. Class JSS1-SSS3 + 73. Staff</h3>
+<div class="row"><select id="cls"><option>JSS1</option><option>JSS2</option><option>JSS3</option><option>SSS1</option><option>SSS2</option><option>SSS3</option></select><select id="type"><option value="student">Student</option><option value="staff">Staff Attendance (73)</option></select></div>
+<div class="row"><input id="attName" placeholder="Student/Staff Name"><input id="attPhone" placeholder="Parent Phone for WhatsApp Alert 68"></div>
+<div class="row"><button class="btn btn-p" style="background:#16a34a" onclick="mark('Present')">✅ Present (21)</button><button class="btn btn-p" style="background:#dc2626" onclick="mark('Absent')">❌ Absent</button><button class="btn btn-p" style="background:#d97706" onclick="mark('Late')">⏰ Late</button></div>
+<p style="font-size:10px">22. Saves to Firestore + localStorage auto</p>
 </div>
-<div class="card" style="font-size:12px"><b>Steps 1-20 Inside This ONE File:</b><br>
-1 Repo EduVerse ✅ 2 Pages ✅ 3 Attendance check + redirect (index) ✅ 4 firebase-config ✅ 5 login ✅ 6 register ✅ 7 dashboard FIXED ✅ 8 landing ✅ 9 subscribe OPay 9027398199 ✅ 10 admin YOU +2348050394277 ✅ 11 Test flow ✅ 12 Fix s.name||s.schoolName ✅ 13 Logo ✅ 14 Mobile Responsive ✅ 15 Favicon ✅ 16 manifest.json PWA ✅ 17 Footer ✅ 18 Push GitHub ✅ 19 Real Link ✅ 20 Test other phone ✅</div>
-<footer>© 2026 EduVerse | CEO Abdulsalam Daud | OPay 9027398199 | Admin +2348050394277</footer>
+
+<!-- 23 View History -->
+<div class="card"><h3>23. View Attendance History + Filter</h3><div class="row"><input type="date" id="filterDate"><select id="filterCls"><option value="">All Classes</option><option>JSS1</option><option>JSS2</option><option>JSS3</option><option>SSS1</option><option>SSS2</option><option>SSS3</option></select><button class="m p" onclick="renderAtt()">Filter</button></div>
+<div style="max-height:300px;overflow:auto"><table><thead><tr><th>Name</th><th>Class</th><th>Type</th><th>Status</th><th>Date</th><th>Action</th></tr></thead><tbody id="attBody"></tbody></table></div></div>
+
+<!-- 24,68 Export PDF + WhatsApp Alert -->
+<div class="card"><h3>24. Export PDF + 68. WhatsApp Alert</h3><div class="row"><button class="btn btn-p" onclick="exportPDF()">📄 Export Attendance to PDF (24)</button><button class="btn btn-g" onclick="sendBulkAbsent()">📲 Bulk Absent WhatsApp Alert (68)</button></div></div>
+
 </section>
 
-<section id="reg"><div class="card" style="max-width:400px;margin:auto"><h2>6 Register School</h2><input id="rn" placeholder="School Name"><input id="re" placeholder="Email"><input id="rp" placeholder="Phone"><input id="rpa" type="password" placeholder="Password"><button class="btn btn-p" id="rb">Register - Attendance Check</button><p id="rm" style="color:red;font-size:12px"></p><p style="font-size:11px">After register, auto redirect to Dashboard (Step 3)</p></div></section>
-
-<section id="login"><div class="card" style="max-width:400px;margin:auto"><h2>5 Login - Email + Password + Role</h2><input id="le" placeholder="Email"><input id="lpa" type="password" placeholder="Password"><select id="role"><option>School Admin</option><option>Teacher</option><option>Super Admin</option></select><button class="btn btn-p" id="lb">Login</button><p id="lm" style="color:red;font-size:12px"></p></div></section>
-
-<section id="dash"><div class="card" id="dc"><h2>3 Attendance Check + Redirect Loading... Dashboard FIXED</h2></div>
-<div class="card"><h3>Attendance Marking (Step 21-25 Inside MEGA STEP 1)</h3><div style="display:flex;gap:6px"><input id="attName" placeholder="Student Name"><select id="attStatus"><option>Present</option><option>Absent</option><option>Late</option></select><button class="mbtn p" onclick="markAtt()">Mark</button></div><div id="attList" style="font-size:12px;margin-top:8px"></div></div>
-</section>
-
-<section id="pay"><div class="card" style="max-width:420px;margin:auto;text-align:center"><h2>9 Subscribe OPay 9027398199</h2><div class="pay" style="text-align:left">Bank: <b>OPay</b><br>Acc: <b>9027398199</b> <button onclick="navigator.clipboard.writeText('9027398199');alert('Copied')" style="padding:4px 8px;background:#111;color:#fff;border:none;border-radius:6px">Copy</button><br>Name: <b>Aminat Abdulsalam</b><br>CEO: Abdulsalam Daud</div><a href="https://wa.me/2348050394277?text=Hello%20I%20paid%20to%20OPay%209027398199%20My%20email%20is"><button class="btn btn-p">✅ I Have Paid - Activate Me</button></a></div></section>
-
-<section id="admin"><div class="card" style="max-width:420px;margin:auto;border:2px solid red"><h2>10 Admin YOU ONLY +2348050394277</h2><input id="adminEmail" placeholder="School Email to Activate"><select id="days"><option value="3">3 Days FREE TRIAL (Step 82)</option><option value="30">30 Days ₦20k</option><option value="90">90 Days</option><option value="365">365 Days</option></select><button class="btn btn-p" onclick="activate()">Activate - Set Expiry 30/60/90/365 (55)</button></div></section>
+<section id="pay"><div class="card" style="text-align:center"><h2>OPay 9027398199 - Aminat Abdulsalam</h2><p>CEO Abdulsalam Daud | Admin +2348050394277</p><a href="https://wa.me/2348050394277?text=I%20paid%20to%209027398199"><button class="btn btn-p">I Have Paid</button></a></div></section>
 
 <script>
-function S(id){document.querySelectorAll('section').forEach(s=>s.classList.remove('on'));document.getElementById(id).classList.add('on');window.scrollTo(0,0)}
-let att=JSON.parse(localStorage.getItem('att')||'[]');
-function markAtt(){let n=document.getElementById('attName').value,s=document.getElementById('attStatus').value,d=new Date().toLocaleString();if(!n)return;att.push({n,s,d});localStorage.setItem('att',JSON.stringify(att));renderAtt();}
-function renderAtt(){document.getElementById('attList').innerHTML=att.map(a=>`${a.n} - ${a.s} - ${a.d}`).join('<br>')} renderAtt();
-function activate(){let e=document.getElementById('adminEmail').value,d=document.getElementById('days').value;let exp=new Date();exp.setDate(exp.getDate()+parseInt(d));localStorage.setItem('expiry_'+e,exp.toISOString());localStorage.setItem('expiry_current',exp.toISOString());alert('Activated '+e+' for '+d+' days till '+exp.toLocaleDateString());}
+function S(id){document.querySelectorAll('section').forEach(s=>s.classList.remove('on'));document.getElementById(id).classList.add('on');}
+let att=JSON.parse(localStorage.getItem('edu_attendance')||'[]');
+async function mark(status){
+ let name=document.getElementById('attName').value, cls=document.getElementById('cls').value, type=document.getElementById('type').value, phone=document.getElementById('attPhone').value, date=new Date().toLocaleDateString(), time=new Date().toLocaleString();
+ if(!name)return alert('Enter name');
+ let record={id:Date.now(),name,class:cls,type,status,date,time,phone,day:new Date().toISOString().split('T')[0]};
+ att.push(record);localStorage.setItem('edu_attendance',JSON.stringify(att));
+ // 22 Save to Firestore if logged in - will try
+ try{if(window.saveToFS)await window.saveToFS(record);}catch(e){}
+ renderAtt();document.getElementById('attName').value='';
+ // 68 Auto WhatsApp if Absent
+ if(status==='Absent' && phone){let msg=`ALERT from EduVerse: Your child ${name} (${cls}) was marked ABSENT today ${date}. - ${'Abdulsalam Daud'} - 9027398199`;window.open(`https://wa.me/234${phone.slice(-10)}?text=${encodeURIComponent(msg)}`,'_blank')}
+}
+function renderAtt(){
+ let fd=document.getElementById('filterDate').value, fc=document.getElementById('filterCls').value;
+ let filtered=att; if(fd){let d=new Date(fd).toLocaleDateString(); filtered=filtered.filter(a=>a.date===d||a.day===fd)} if(fc)filtered=filtered.filter(a=>a.class===fc);
+ document.getElementById('attBody').innerHTML=filtered.reverse().map(r=>`<tr><td>${r.name}</td><td>${r.class}</td><td>${r.type}</td><td><span class="chip ${r.status.toLowerCase()}">${r.status}</span></td><td>${r.date}</td><td><button class="m" onclick="waAlert('${r.name}','${r.class}','${r.phone||''}')">WA Alert</button></td></tr>`).join('');
+}
+function waAlert(name,cls,phone){if(!phone)return alert('No phone saved - add phone in marking');let msg=`ALERT: Your child ${name} (${cls}) was ABSENT today. Please contact school. - EduVerse CEO Abdulsalam Daud 9027398199`;window.open(`https://wa.me/234${phone.slice(-10)}?text=${encodeURIComponent(msg)}`,'_blank')}
+function exportPDF(){const {jsPDF}=window.jspdf;const doc=new jsPDF();doc.text("EduVerse Attendance - CEO Abdulsalam Daud - 9027398199",10,10);let y=20;att.slice(-30).forEach((r,i)=>{doc.text(`${i+1}. ${r.name} - ${r.class} - ${r.status} - ${r.date}`,10,y);y+=7;if(y>280){doc.addPage();y=10}});doc.save(`Attendance_${new Date().toLocaleDateString()}.pdf`)}
+function sendBulkAbsent(){let today=new Date().toLocaleDateString();let absentToday=att.filter(a=>a.date===today && a.status==='Absent');if(!absentToday.length)return alert('No absent today');if(!confirm(`Send WhatsApp alert to ${absentToday.length} absent students parents?`))return;absentToday.forEach(r=>{if(r.phone){let msg=`ALERT: ${r.name} (${r.class}) ABSENT today ${today}. - EduVerse`;window.open(`https://wa.me/234${r.phone.slice(-10)}?text=${encodeURIComponent(msg)}`,'_blank')}})}
+renderAtt();
 </script>
 
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import {getFirestore,doc,setDoc,getDoc} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-const firebaseConfig = {
-  apiKey: "AIzaSyBu37fV7AVatgXsA9YVbJQHELEMeCAfBhA",
-  authDomain: "eduverse-a1d66.firebaseapp.com",
-  projectId: "eduverse-a1d66",
-  storageBucket: "eduverse-a1d66.firebasestorage.app",
-  messagingSenderId: "657029326378",
-  appId: "1:657029326378:web:662a4302b2a6f8af5e0553",
-  measurementId: "G-RT2GEEH44T"
-};
+import {getAuth,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {getFirestore,doc,setDoc,getDoc,collection,addDoc} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+const firebaseConfig={apiKey:"AIzaSyBu37fV7AVatgXsA9YVbJQHELEMeCAfBhA",authDomain:"eduverse-a1d66.firebaseapp.com",projectId:"eduverse-a1d66",storageBucket:"eduverse-a1d66.firebasestorage.app",messagingSenderId:"657029326378",appId:"1:657029326378:web:662a4302b2a6f8af5e0553",measurementId:"G-RT2GEEH44T"};
 const app=initializeApp(firebaseConfig);const auth=getAuth(app);const db=getFirestore(app);
-document.getElementById('rb').onclick=async()=>{const n=document.getElementById('rn').value,e=document.getElementById('re').value,p=document.getElementById('rp').value,pa=document.getElementById('rpa').value,m=document.getElementById('rm');if(!n||!e||!pa){m.textContent="Fill all";return}m.textContent="Creating...";try{const c=await createUserWithEmailAndPassword(auth,e,pa);await setDoc(doc(db,"students",c.user.uid),{name:n,schoolName:n,email:e,phone:p,expiryDate:new Date(Date.now()+3*86400000).toISOString(),createdAt:new Date().toISOString()});localStorage.setItem('expiry_current',new Date(Date.now()+3*86400000).toISOString());S('dash')}catch(err){m.textContent=err.message}};
-document.getElementById('lb').onclick=async()=>{const e=document.getElementById('le').value,pa=document.getElementById('lpa').value,m=document.getElementById('lm');m.textContent="Login...";try{await signInWithEmailAndPassword(auth,e,pa);S('dash')}catch(err){m.textContent=err.message}};
+window.saveToFS=async(rec)=>{try{await addDoc(collection(db,"attendance"),rec);}catch(e){console.log(e)}};
 onAuthStateChanged(auth,async(u)=>{
-if(!u){return}
-const dc=document.getElementById('dc');
-try{
-const snap=await getDoc(doc(db,"students",u.uid));
-if(!snap.exists()){dc.innerHTML="No data found";return}
-const s=snap.data();
-const displayName = s.name || s.schoolName || "School";
-dc.innerHTML=`<h2>✅ Welcome, ${displayName} 👋</h2><p><b>FIXED Bug (Step 12): s.name || s.schoolName</b><br>Email: ${s.email}<br>Phone: ${s.phone}<br>Expiry: ${s.expiryDate}<br><b>CEO Abdulsalam Daud - 9027398199</b></p><button class="mbtn p" onclick="S('pay')">Pay OPay 9027398199</button><button class="mbtn" onclick="S('admin')">Admin +2348050394277</button>`;
-S('dash');
-}catch(e){dc.innerHTML="Error: "+e.message}
+ const dc=document.getElementById('dc');
+ if(!u){dc.innerHTML=`<b>Login to save to Cloud (22)</b><br>Currently saving to phone only. <br>CEO Abdulsalam Daud - OPay 9027398199`;S('dash');return}
+ try{const snap=await getDoc(doc(db,"students",u.uid));const s=snap.data();const name=s.name||s.schoolName||"School";dc.innerHTML=`<h2>Welcome ${name} ✅</h2><p>${s.email} | Expiry: ${s.expiryDate?.slice(0,10)}<br>Steps 21-25,68,73 Inside This Dashboard | Admin +2348050394277</p>`;}catch(e){dc.innerHTML=e.message}
+ S('dash');
 });
 </script>
-</body>
-  </html>
+</body></html>
