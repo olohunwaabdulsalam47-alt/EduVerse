@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Subscribe - EduVerse</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+body{background:linear-gradient(135deg,#4f46e5,#7c3aed);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.card{background:#fff;max-width:420px;width:100%;border-radius:20px;padding:28px;box-shadow:0 20px 50px rgba(0,0,0,.2);text-align:center}
+.logo{font-size:28px;font-weight:900;color:#4f46e5;margin-bottom:6px}
+.sub{color:#6b7280;font-size:14px;margin-bottom:22px}
+.plan{background:#f8f7ff;border:2px solid #4f46e5;border-radius:14px;padding:16px;margin-bottom:20px}
+.plan h3{color:#4f46e5;margin-bottom:4px}
+.price{font-size:32px;font-weight:900;color:#111827}
+.price span{font-size:14px;color:#6b7280;font-weight:400}
+.pay-box{background:#f9fafb;border:1px dashed #d1d5db;border-radius:14px;padding:16px;text-align:left;margin-bottom:20px}
+.pay-box h4{margin-bottom:10px;font-size:15px}
+.row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eee;font-size:15px}
+.row:last-child{border:none}
+.row b{color:#111827}
+.copy-btn{background:#111827;color:#fff;border:none;padding:8px 14px;border-radius:8px;font-size:13px;cursor:pointer;margin-left:8px}
+.alert{background:#fef3c7;border:1px solid #fcd34d;color:#92400e;padding:12px;border-radius:10px;font-size:13px;text-align:left;margin-bottom:18px;line-height:1.5}
+.btn{width:100%;padding:14px;border:none;border-radius:12px;font-weight:800;font-size:16px;cursor:pointer;display:block;text-decoration:none;margin-top:10px}
+.btn-primary{background:#4f46e5;color:#fff}
+.btn-whatsapp{background:#25D366;color:#fff}
+.btn-outline{background:#fff;color:#4f46e5;border:2px solid #4f46e5}
+.steps{text-align:left;font-size:13px;color:#4b5563;line-height:1.7;margin:14px 0 0}
+</style>
+</head>
+<body>
+<div class="card">
+<div class="logo">EduVerse</div>
+<div class="sub">Secure Subscription Payment</div>
+
+<div class="plan">
+<h3>Full Access Plan</h3>
+<div class="price">₦3,000 <span>/ term</span></div>
+<p style="font-size:13px;color:#6b7280;margin-top:6px">JSS1 - SS3 • All Subjects • Past Questions • CBT</p>
+</div>
+
+<div class="pay-box">
+<h4>💳 Pay To:</h4>
+<div class="row"><span>Bank:</span><b>OPay (Paycom)</b></div>
+<div class="row"><span>Account Number:</span><b id="acct">9027398199 <button class="copy-btn" onclick="copyAcct()">Copy</button></b></div>
+<div class="row"><span>Account Name:</span><b>Aminat Abdulsalam</b></div>
+</div>
+
+<div class="alert">
+<b>⚠️ Important:</b> After payment, click "I Have Paid" below and send your payment receipt + email on WhatsApp for instant activation.
+</div>
+
+<a href="https://wa.me/2349027398199?text=Hello%20EduVerse%2C%20I%20just%20paid%20for%20EduVerse%20subscription.%20My%20email%20is%3A%20%0AAccount%20Name%3A%20Aminat%20Abdulsalam%20%0AAccount%20No%3A%209027398199%20%0APlease%20activate%20me" class="btn btn-primary" id="paidBtn">✅ I Have Paid - Activate Me</a>
+
+<a href="https://wa.me/2349027398199?text=Hi%20EduVerse%2C%20I%20want%20to%20subscribe%20but%20need%20help" class="btn btn-whatsapp">💬 Chat on WhatsApp</a>
+
+<a href="landing.html" class="btn btn-outline">← Back to Home</a>
+
+<div class="steps">
+<b>How it works:</b><br>
+1. Transfer to OPay 9027398199<br>
+2. Copy receipt / screenshot<br>
+3. Click "I Have Paid" button<br>
+4. Send receipt + your registered email<br>
+5. Account activated in 5 mins
+</div>
+
+<p style="font-size:11px;color:#9ca3af;margin-top:16px">Secured by EduVerse • Trusted by 5,000+ Students</p>
+</div>
+
+<script>
+function copyAcct(){
+  navigator.clipboard.writeText("9027398199");
+  alert("Account number 9027398199 copied!");
+}
+</script>
+</body>
+  </html>
