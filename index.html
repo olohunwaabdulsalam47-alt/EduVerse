@@ -1,91 +1,89 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EduVerse - Smart School Attendance</title>
+<title>EduVerse - School Manager</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}body{background:#f6f7ff}nav{background:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 10px rgba(0,0,0,.06);position:sticky;top:0;z-index:10}.logo{font-weight:900;color:#4f46e5;font-size:16px}.m{padding:7px 12px;border-radius:8px;border:1px solid #4f46e5;background:#fff;color:#4f46e5;font-weight:700;margin:2px;font-size:12px;cursor:pointer}.m.p{background:#4f46e5;color:#fff}section{display:none;padding:14px;max-width:900px;margin:auto}section.on{display:block}.card{background:#fff;padding:16px;border-radius:14px;box-shadow:0 6px 20px rgba(0,0,0,.06);margin:10px 0}input,select{width:100%;padding:11px;border:1px solid #e5e7eb;border-radius:10px;margin:5px 0}.btn{width:100%;padding:12px;border:none;border-radius:10px;font-weight:800;margin-top:6px;cursor:pointer}.btn-p{background:#4f46e5;color:#fff}.btn-g{background:#25D366;color:#fff}.row{display:flex;gap:8px}.chip{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700}.present{background:#dcfce7;color:#166534}.absent{background:#fee2e2;color:#991b1b}.late{background:#fef3c7;color:#92400e}table{width:100%;border-collapse:collapse;font-size:12px}th,td{border:1px solid #f1f5f9;padding:8px;text-align:left}th{background:#f8fafc}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}body{background:#f6f7ff}nav{background:#fff;padding:12px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 10px rgba(0,0,0,.06);position:sticky;top:0;z-index:20}.logo{font-weight:900;color:#4f46e5}.m{padding:7px 10px;border-radius:8px;border:1px solid #4f46e5;background:#fff;color:#4f46e5;font-weight:700;margin:2px;font-size:11px;cursor:pointer}.m.p{background:#4f46e5;color:#fff}section{display:none;padding:12px;max-width:950px;margin:auto}section.on{display:block}.card{background:#fff;padding:16px;border-radius:14px;box-shadow:0 6px 20px rgba(0,0,0,.06);margin:10px 0}input,select{width:100%;padding:11px;border:1px solid #e5e7eb;border-radius:10px;margin:4px 0}.btn{width:100%;padding:12px;border:none;border-radius:10px;font-weight:800;margin-top:6px;cursor:pointer}.btn-p{background:#4f46e5;color:#fff}.btn-g{background:#25D366;color:#fff}.btn-d{background:#111;color:#fff}.row{display:flex;gap:8px}table{width:100%;border-collapse:collapse;font-size:11px}th,td{border:1px solid #f1f5f9;padding:7px;text-align:left}th{background:#f8fafc}.chip{padding:3px 8px;border-radius:20px;font-size:10px;font-weight:700}.paid{background:#dcfce7;color:#166534}.debt{background:#fee2e2;color:#991b1b}.stat{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
 </style></head><body>
-<nav><div class="logo">🎓 EduVerse</div><div><button class="m p" onclick="S('dash')">Dashboard</button><button class="m" onclick="S('pay')">Subscription</button></div></nav>
+<nav><div class="logo">🎓 EduVerse</div><div><button class="m p" onclick="S('dash')">Home</button><button class="m" onclick="S('att')">Attendance</button><button class="m" onclick="S('fees')">Fees</button><button class="m" onclick="S('acc')">Account</button></div></nav>
 
 <section id="dash" class="on">
 <div class="card" id="dc" style="background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff"><h3>Welcome!</h3><p>Loading...</p></div>
-
-<div class="card">
-<h3>Mark Attendance</h3>
-<div class="row"><select id="cls"><option>JSS1</option><option>JSS2</option><option>JSS3</option><option>SSS1</option><option>SSS2</option><option>SSS3</option><option>Primary 1</option><option>Primary 2</option><option>Primary 3</option><option>Primary 4</option><option>Primary 5</option><option>Primary 6</option></select><select id="type"><option value="Student">Student</option><option value="Staff">Staff</option></select></div>
-<div class="row"><input id="attName" placeholder="Full Name"><input id="attPhone" placeholder="Parent Phone (for absent alert)"></div>
-<div class="row"><button class="btn btn-p" style="background:#16a34a" onclick="mark('Present')">✅ Present</button><button class="btn btn-p" style="background:#dc2626" onclick="mark('Absent')">❌ Absent</button><button class="btn btn-p" style="background:#d97706" onclick="mark('Late')">⏰ Late</button></div>
+<div class="stat">
+<div class="card" style="text-align:center"><b id="tInc">₦0</b><br><small>Total Income</small></div>
+<div class="card" style="text-align:center"><b id="tDebt">₦0</b><br><small>Debtors</small></div>
+<div class="card" style="text-align:center"><b id="tExp">₦0</b><br><small>Expenses</small></div>
 </div>
-
-<div class="card">
-<h3>Attendance History</h3>
-<div class="row"><input type="date" id="filterDate"><select id="filterCls"><option value="">All Classes</option><option>JSS1</option><option>JSS2</option><option>JSS3</option><option>SSS1</option><option>SSS2</option><option>SSS3</option></select><button class="m p" onclick="renderAtt()">Filter</button></div>
-<div style="overflow:auto;max-height:350px"><table><thead><tr><th>Name</th><th>Class</th><th>Type</th><th>Status</th><th>Date</th><th>Notify</th></tr></thead><tbody id="attBody"></tbody></table></div>
-<div class="row" style="margin-top:10px"><button class="btn btn-p" style="background:#111" onclick="exportPDF()">📄 Download PDF Report</button><button class="btn btn-g" onclick="sendBulkAbsent()">📲 Send Absent Alerts</button></div>
-</div>
-
-<div class="card" style="font-size:11px;text-align:center;color:#6b7280">© EduVerse | OPay 9027398199 Aminat Abdulsalam | Support +2348050394277</div>
+<div class="card"><h3>Quick Access</h3><div class="row"><button class="btn btn-p" onclick="S('att')">Take Attendance</button><button class="btn btn-p" style="background:#16a34a" onclick="S('fees')">Collect Fees</button></div></div>
 </section>
 
-<section id="pay"><div class="card" style="text-align:center;max-width:400px;margin:auto"><h2>Subscription</h2><div style="border:1px dashed #cbd5e1;padding:14px;border-radius:10px;text-align:left;background:#f8fafc;margin:10px 0">Bank: <b>OPay</b><br>Account: <b>9027398199</b><br>Name: <b>Aminat Abdulsalam</b></div><a href="https://wa.me/2348050394277?text=Hello%20I%20paid%20to%20OPay%209027398199"><button class="btn btn-p">I Have Paid - Activate Me</button></a><button class="btn" onclick="S('dash')" style="background:#e5e7eb">Back</button></div></section>
+<section id="att">
+<div class="card"><h3>Mark Attendance</h3><div class="row"><select id="cls"><option>JSS1</option><option>JSS2</option><option>JSS3</option><option>SSS1</option><option>SSS2</option><option>SSS3</option><option>Primary 1</option><option>Primary 2</option><option>Primary 3</option><option>Primary 4</option><option>Primary 5</option><option>Primary 6</option></select><select id="type"><option value="Student">Student</option><option value="Staff">Staff</option></select></div><div class="row"><input id="attName" placeholder="Full Name"><input id="attPhone" placeholder="Parent Phone"></div><div class="row"><button class="btn btn-p" style="background:#16a34a" onclick="markA('Present')">✅ Present</button><button class="btn btn-p" style="background:#dc2626" onclick="markA('Absent')">❌ Absent</button><button class="btn btn-p" style="background:#d97706" onclick="markA('Late')">⏰ Late</button></div></div>
+<div class="card"><h3>Attendance History</h3><div style="overflow:auto;max-height:250px"><table><thead><tr><th>Name</th><th>Class</th><th>Status</th><th>Date</th></tr></thead><tbody id="attBody"></tbody></table></div><button class="btn btn-d" onclick="exportAttPDF()">📄 Download Attendance PDF</button></div>
+</section>
+
+<section id="fees">
+<div class="card"><h3>Add Student Fees Record</h3><div class="row"><input id="fName" placeholder="Student Name"><input id="fClass" placeholder="Class e.g. JSS1"></div><div class="row"><input id="fPhone" placeholder="Parent Phone"><input id="fTotal" type="number" placeholder="Total Fees e.g. 50000"></div><div class="row"><input id="fPaid" type="number" placeholder="Amount Paid"><select id="fTerm"><option>1st Term</option><option>2nd Term</option><option>3rd Term</option></select></div><button class="btn btn-p" onclick="addFees()">💾 Save Fees Record</button></div>
+
+<div class="card"><h3>Fees List - Paid / Balance</h3><div class="row"><input id="searchFees" placeholder="Search name" oninput="renderFees()"><button class="m p" onclick="renderFees()">Search</button></div><div style="overflow:auto;max-height:300px"><table><thead><tr><th>Name</th><th>Class</th><th>Total</th><th>Paid</th><th>Bal</th><th>Action</th></tr></thead><tbody id="feesBody"></tbody></table></div>
+<div class="row" style="margin-top:8px"><button class="btn btn-d" onclick="exportDebtors()">📄 Debtors List PDF</button><button class="btn btn-g" onclick="bulkFeesReminder()">📲 Bulk Fees Reminder WA</button><button class="btn btn-p" style="background:#111" onclick="exportIncome()">📊 Income Report PDF</button></div>
+</div>
+
+<div class="card"><h3>Expense Tracker</h3><div class="row"><input id="eTitle" placeholder="Expense e.g. Chalk"><input id="eAmt" type="number" placeholder="Amount"><button class="m p" onclick="addExp()">Add</button></div><div id="expList" style="font-size:12px;margin-top:6px"></div></div>
+
+<div class="card"><h3>Staff Salary</h3><div class="row"><input id="sName" placeholder="Staff Name"><input id="sAmt" type="number" placeholder="Salary"><button class="m p" onclick="addSal()">Pay</button></div><div id="salList" style="font-size:12px;margin-top:6px"></div></div>
+
+<div id="qr" style="display:none"></div>
+</section>
+
+<section id="acc"><div class="card" style="text-align:center"><h3>Subscription</h3><div style="border:1px dashed #cbd5e1;padding:12px;border-radius:10px;background:#f8fafc;text-align:left;margin:10px 0">OPay: <b>9027398199</b><br>Name: <b>Aminat Abdulsalam</b><br>Support: <b>+2348050394277</b></div><a href="https://wa.me/2348050394277"><button class="btn btn-p">I Have Paid</button></a><button class="btn" style="background:#eee" onclick="S('dash')">Back</button></div></section>
 
 <script>
 function S(id){document.querySelectorAll('section').forEach(s=>s.classList.remove('on'));document.getElementById(id).classList.add('on');}
 let att=JSON.parse(localStorage.getItem('edu_attendance')||'[]');
-function mark(status){
- let name=document.getElementById('attName').value.trim(), cls=document.getElementById('cls').value, type=document.getElementById('type').value, phone=document.getElementById('attPhone').value.trim(), date=new Date().toLocaleDateString(), day=new Date().toISOString().split('T')[0];
- if(!name)return alert('Enter name');
- let rec={id:Date.now(),name,class:cls,type,status,date,day,phone,time:new Date().toLocaleString()};
- att.push(rec);localStorage.setItem('edu_attendance',JSON.stringify(att));
- try{if(window.saveToFS)window.saveToFS(rec);}catch(e){}
- renderAtt();document.getElementById('attName').value='';
- if(status==='Absent' && phone){let msg=`Dear Parent, Your child ${name} (${cls}) was marked ABSENT today ${date}. - EduVerse`;window.open(`https://wa.me/234${phone.slice(-10)}?text=${encodeURIComponent(msg)}`,'_blank')}
+let fees=JSON.parse(localStorage.getItem('edu_fees')||'[]');
+let exps=JSON.parse(localStorage.getItem('edu_exp')||'[]');
+let sals=JSON.parse(localStorage.getItem('edu_sal')||'[]');
+
+function markA(st){let n=document.getElementById('attName').value.trim(),c=document.getElementById('cls').value,t=document.getElementById('type').value,p=document.getElementById('attPhone').value.trim();if(!n)return alert('Name');let r={id:Date.now(),name:n,class:c,type:t,status:st,date:new Date().toLocaleDateString(),day:new Date().toISOString().split('T')[0],phone:p};att.push(r);localStorage.setItem('edu_attendance',JSON.stringify(att));renderAtt();document.getElementById('attName').value='';if(st==='Absent'&&p)window.open(`https://wa.me/234${p.slice(-10)}?text=${encodeURIComponent('Dear Parent, '+n+' ('+c+') ABSENT today. - EduVerse')}`,'_blank');}
+function renderAtt(){document.getElementById('attBody').innerHTML=att.slice().reverse().slice(0,30).map(r=>`<tr><td>${r.name}</td><td>${r.class}</td><td>${r.status}</td><td>${r.date}</td></tr>`).join('')||'<tr><td colspan=4>No record</td></tr>';}
+function exportAttPDF(){const{jsPDF}=window.jspdf;const d=new jsPDF();d.text("Attendance Report - EduVerse",10,10);let y=20;att.slice(-40).forEach((r,i)=>{d.text(`${i+1}. ${r.name} | ${r.class} | ${r.status} | ${r.date}`,10,y);y+=6;if(y>280){d.addPage();y=10}});d.save('Attendance.pdf')}
+
+function addFees(){let name=document.getElementById('fName').value.trim(),cls=document.getElementById('fClass').value.trim()||document.getElementById('cls').value,phone=document.getElementById('fPhone').value.trim(),total=parseInt(document.getElementById('fTotal').value)||0,paid=parseInt(document.getElementById('fPaid').value)||0,term=document.getElementById('fTerm').value;if(!name||!total)return alert('Name & Total required');let bal=total-paid;let rec={id:Date.now(),name,class:cls,phone,total,paid,balance:bal,term,date:new Date().toLocaleDateString()};fees.push(rec);localStorage.setItem('edu_fees',JSON.stringify(fees));renderFees();genReceipt(rec);document.getElementById('fName').value='';document.getElementById('fPaid').value='';}
+function renderFees(){let s=document.getElementById('searchFees').value.toLowerCase();let f=fees.filter(x=>x.name.toLowerCase().includes(s));let tin=0,td=0;fees.forEach(r=>{tin+=r.paid;td+=r.balance});document.getElementById('tInc').innerText='₦'+tin.toLocaleString();document.getElementById('tDebt').innerText='₦'+td.toLocaleString();let te=0;exps.forEach(e=>te+=e.amt);document.getElementById('tExp').innerText='₦'+te.toLocaleString();document.getElementById('feesBody').innerHTML=f.reverse().map(r=>`<tr><td>${r.name}</td><td>${r.class}</td><td>${r.total}</td><td>${r.paid}</td><td style="color:${r.balance>0?'red':'green'}">${r.balance}</td><td><button class="m" onclick="genReceiptById(${r.id})">Receipt</button></td></tr>`).join('')||'<tr><td colspan=6>No fees yet</td></tr>';renderExp();renderSal();}
+function genReceiptById(id){let r=fees.find(x=>x.id===id);if(r)genReceipt(r);}
+function genReceipt(r){
+ const{jsPDF}=window.jspdf;const doc=new jsPDF();
+ doc.setFontSize(16);doc.text("EduVerse School Receipt",70,12);
+ doc.setFontSize(10);doc.text(`Date: ${r.date} | Term: ${r.term}`,10,20);
+ doc.text(`Student: ${r.name}`,10,28);doc.text(`Class: ${r.class}`,10,34);doc.text(`Parent Phone: ${r.phone}`,10,40);
+ doc.text(`Total Fees: N${r.total}`,10,48);doc.text(`Paid: N${r.paid}`,10,54);doc.setFontSize(12);doc.text(`Balance: N${r.balance}`,10,62);
+ doc.setFontSize(9);doc.text(`OPay 9027398199 Aminat Abdulsalam | Support +2348050394277 | CEO Abdulsalam Daud`,10,70);
+ doc.text(`Verify: ${r.id} | ${r.name} paid ${r.paid}`,10,75);
+ // QR
+ const qrDiv=document.getElementById('qr');qrDiv.innerHTML='';new QRCode(qrDiv,{text:`EduVerse Receipt ${r.id} - ${r.name} - Paid N${r.paid} - Bal N${r.balance} - 9027398199`,width:80,height:80});
+ setTimeout(()=>{try{let c=qrDiv.querySelector('canvas');if(c){let img=c.toDataURL();doc.addImage(img,'PNG',150,30,40,40)} }catch(e){} doc.save(`Receipt_${r.name}_${r.date}.pdf`);},600);
 }
-function renderAtt(){
- let fd=document.getElementById('filterDate').value, fc=document.getElementById('filterCls').value;
- let f=att.slice(); if(fd){let d=new Date(fd).toLocaleDateString(); f=f.filter(a=>a.day===fd||a.date===d)} if(fc)f=f.filter(a=>a.class===fc);
- document.getElementById('attBody').innerHTML=f.reverse().map(r=>`<tr><td>${r.name}</td><td>${r.class}</td><td>${r.type}</td><td><span class="chip ${r.status.toLowerCase()}">${r.status}</span></td><td>${r.date}</td><td><button class="m" onclick="wa('${r.name}','${r.class}','${r.phone}')">Alert</button></td></tr>`).join('')||'<tr><td colspan=6 style="text-align:center;color:#999">No records yet</td></tr>';
-}
-function wa(n,c,p){if(!p)return alert('No phone');let m=`Dear Parent, ${n} (${c}) was ABSENT today. - EduVerse`;window.open(`https://wa.me/234${p.slice(-10)}?text=${encodeURIComponent(m)}`,'_blank')}
-function exportPDF(){const{jsPDF}=window.jspdf;const doc=new jsPDF();doc.text("EduVerse Attendance Report",10,12);doc.setFontSize(9);doc.text(`${new Date().toLocaleString()} | Support: +2348050394277`,10,18);let y=26;att.slice(-40).forEach((r,i)=>{doc.text(`${i+1}. ${r.name} | ${r.class} | ${r.type} | ${r.status} | ${r.date}`,10,y);y+=6;if(y>280){doc.addPage();y=10}});doc.save(`EduVerse_${new Date().toISOString().split('T')[0]}.pdf`)}
-function sendBulkAbsent(){let today=new Date().toLocaleDateString();let abs=att.filter(a=>a.date===today && a.status==='Absent');if(!abs.length)return alert('No absent today');abs.forEach(r=>{if(r.phone)wa(r.name,r.class,r.phone)})}
-renderAtt();
+function exportDebtors(){const{jsPDF}=window.jspdf;const doc=new jsPDF();doc.text("EduVerse Debtors List",10,10);let y=18;let debt=fees.filter(r=>r.balance>0);if(!debt.length)return alert('No debtors');debt.forEach((r,i)=>{doc.text(`${i+1}. ${r.name} | ${r.class} | Total ${r.total} | Paid ${r.paid} | Bal ${r.balance} | ${r.phone}`,10,y);y+=7;if(y>280){doc.addPage();y=10}});doc.save('Debtors.pdf')}
+function bulkFeesReminder(){let debt=fees.filter(r=>r.balance>0);if(!debt.length)return alert('No debtors');if(!confirm(`Send WhatsApp reminder to ${debt.length} debtors?`))return;debt.forEach(r=>{if(r.phone){let msg=`Dear Parent, Reminder: ${r.name} (${r.class}) has outstanding fees balance N${r.balance}. Total N${r.total}, Paid N${r.paid}. Please pay to OPay 9027398199 Aminat Abdulsalam. - EduVerse`;window.open(`https://wa.me/234${r.phone.slice(-10)}?text=${encodeURIComponent(msg)}`,'_blank')}})}
+function exportIncome(){const{jsPDF}=window.jspdf;const doc=new jsPDF();doc.text("EduVerse Income Report",10,10);let y=18;let tin=0;fees.forEach(r=>tin+=r.paid);doc.text(`Total Income: N${tin}`,10,y);y+=8;doc.text(`Date: ${new Date().toLocaleString()}`,10,y);y+=8;fees.forEach((r,i)=>{doc.text(`${i+1}. ${r.name} - N${r.paid} - ${r.date}`,10,y);y+=6;if(y>280){doc.addPage();y=10}});doc.save('Income_Report.pdf')}
+
+function addExp(){let t=document.getElementById('eTitle').value,a=parseInt(document.getElementById('eAmt').value);if(!t||!a)return alert('Enter');exps.push({title:t,amt:a,date:new Date().toLocaleDateString()});localStorage.setItem('edu_exp',JSON.stringify(exps));renderExp();document.getElementById('eTitle').value='';document.getElementById('eAmt').value='';}
+function renderExp(){document.getElementById('expList').innerHTML=exps.slice().reverse().map(e=>`• ${e.title} - ₦${e.amt} (${e.date})`).join('<br>')||'No expenses';let te=0;exps.forEach(e=>te+=e.amt);document.getElementById('tExp').innerText='₦'+te.toLocaleString();}
+function addSal(){let n=document.getElementById('sName').value,a=parseInt(document.getElementById('sAmt').value);if(!n||!a)return alert('Enter');sals.push({name:n,amt:a,date:new Date().toLocaleDateString()});localStorage.setItem('edu_sal',JSON.stringify(sals));renderSal();document.getElementById('sName').value='';document.getElementById('sAmt').value='';}
+function renderSal(){document.getElementById('salList').innerHTML=sals.slice().reverse().map(s=>`• ${s.name} - ₦${s.amt} (${s.date})`).join('<br>')||'No salary paid';}
+
+renderAtt();renderFees();
 </script>
 
 <script type="module">
-import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";import{getAuth,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";import{getFirestore,doc,getDoc,collection,addDoc}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";import{getAuth,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";import{getFirestore,doc,getDoc}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 const firebaseConfig={apiKey:"AIzaSyBu37fV7AVatgXsA9YVbJQHELEMeCAfBhA",authDomain:"eduverse-a1d66.firebaseapp.com",projectId:"eduverse-a1d66",storageBucket:"eduverse-a1d66.firebasestorage.app",messagingSenderId:"657029326378",appId:"1:657029326378:web:662a4302b2a6f8af5e0553",measurementId:"G-RT2GEEH44T"};
 const app=initializeApp(firebaseConfig);const auth=getAuth(app);const db=getFirestore(app);
-window.saveToFS=async(rec)=>{try{await addDoc(collection(db,"attendance"),rec)}catch(e){}};
-
 onAuthStateChanged(auth,async(u)=>{
- const dc=document.getElementById('dc');
- if(!u){
-   let savedName = localStorage.getItem('schoolName') || 'School';
-   dc.innerHTML=`<h2>Welcome, ${savedName} ✅</h2><p style="font-size:13px;opacity:.9">Offline Mode Ready | Your data saves locally</p>`;
-   return
- }
- // Try to get from Firestore, but NEVER show error to user
- try{
-  const snap=await getDoc(doc(db,"students",u.uid));
-  let displayName = localStorage.getItem('schoolName') || u.email.split('@')[0];
-  let email = u.email;
-  let expiryText = "3 Days Trial";
-  if(snap.exists()){
-    const s=snap.data();
-    displayName = s.name || s.schoolName || displayName;
-    localStorage.setItem('schoolName', displayName);
-    let expiry = s.expiryDate || s.expiry || localStorage.getItem('expiry_current') || "";
-    if(expiry) expiryText = new Date(expiry).toLocaleDateString();
-  }
-  dc.innerHTML=`<h2>Welcome, ${displayName} ✅</h2><p style="font-size:13px;opacity:.9">${email} | Valid till: ${expiryText}</p>`;
- }catch(err){
-  // OFFLINE FALLBACK - NO ERROR SHOWN
-  let savedName = localStorage.getItem('schoolName') || u.email.split('@')[0] || 'School';
-  let expiry = localStorage.getItem('expiry_current');
-  let expiryText = expiry? new Date(expiry).toLocaleDateString() : "3 Days Trial";
-  dc.innerHTML=`<h2>Welcome, ${savedName} ✅</h2><p style="font-size:13px;opacity:.9">${u.email} | Valid till: ${expiryText}<br>Offline Mode - Syncs when online</p>`;
- }
+ const dc=document.getElementById('dc'); if(!u){dc.innerHTML=`<h3>Welcome Guest</h3><p>Login to sync</p>`;return}
+ try{const snap=await getDoc(doc(db,"students",u.uid));let name=localStorage.getItem('schoolName')||'School',email=u.email,exp="3 Days Trial";if(snap.exists()){let s=snap.data();name=s.name||s.schoolName||name;email=s.email||email;let e=s.expiryDate||s.expiry||localStorage.getItem('expiry_current')||'';if(e)exp=new Date(e).toLocaleDateString();localStorage.setItem('schoolName',name);}dc.innerHTML=`<h2>Welcome, ${name} ✅</h2><p style="font-size:13px;opacity:.9">${email} | Valid till: ${exp}<br>Total Income: <span id="incLive"></span></p>`;}catch(err){let name=localStorage.getItem('schoolName')||'School';dc.innerHTML=`<h2>Welcome, ${name} ✅</h2><p>Offline Mode</p>`}
 });
 </script>
 </body></html>
