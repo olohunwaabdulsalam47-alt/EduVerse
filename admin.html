@@ -1,68 +1,63 @@
 <!DOCTYPE html>
-<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Admin</title>
-<style>body{background:#0f172a;color:#fff;font-family:Arial;padding:10px}input,select{width:100%;padding:10px;border-radius:8px;border:none;margin:4px 0}.btn{padding:10px;border-radius:8px;border:none;font-weight:800;cursor:pointer;width:100%;margin:4px 0}.card{background:#1e293b;padding:12px;border-radius:12px;margin:8px 0}table{width:100%;font-size:10px;border-collapse:collapse}th,td{border:1px solid #334;padding:4px}</style></head><body>
-<div class="card" style="display:flex;justify-content:space-between"><div><b id="totalSch">0</b><br><small>Total Schools</small></div><div><b id="activeSch">0</b><br><small>Active</small></div><div><b id="revSch">₦0</b><br><small>Est. Revenue</small></div></div>
-
-<div class="card">
-<h3>Generate New PIN / Activate School</h3>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Admin - Full Actions</title>
+<style>body{background:#0f172a;color:#fff;font-family:Arial;padding:10px}input,select{width:100%;padding:10px;border-radius:8px;border:none;margin:4px 0}.btn{padding:8px;border-radius:8px;border:none;font-weight:800;cursor:pointer;margin:2px;font-size:10px}.card{background:#1e293b;padding:12px;border-radius:12px;margin:8px 0}table{width:100%;font-size:9px;border-collapse:collapse}th,td{border:1px solid #334;padding:4px;text-align:center}th{background:#0f172a}</style></head><body>
+<div class="card" style="display:flex;justify-content:space-between"><div><b id="totalSch">0</b><br><small>Total</small></div><div><b id="activeSch">0</b><br><small>Active</small></div><div><b id="revSch">₦0</b><br><small>Revenue</small></div></div>
+<div class="card"><h3>Generate New PIN / Activate School</h3>
 <div style="display:flex;gap:6px"><input id="schoolName" placeholder="School Name"><input id="clientEmail" placeholder="Client Email"></div>
-<div style="display:flex;gap:6px"><select id="plan"><option value="30">30 Days - ₦15k</option><option value="60">60 Days - ₦25k</option><option value="90">90 Days - ₦40k</option><option value="365">1 Year - ₦100k</option></select><input id="clientPhone" placeholder="Client Phone"></div>
-<div style="display:flex;gap:6px"><input id="pinInput" value="EV-0000"><button onclick="genPin()" style="padding:10px;border-radius:8px;background:#334155;color:#fff;border:none">GEN PIN</button></div>
-<button class="btn" style="background:#22c55e;color:#111" onclick="createSchool()">✅ Create / Activate School + Send WhatsApp</button>
-<small>PIN Format: EV-XXXX | Expiry auto | Client login with email + PIN</small>
-</div>
+<div style="display:flex;gap:6px"><select id="plan"><option value="30">30 Days - ₦15k</option><option value="60">60 Days</option><option value="90">90 Days</option><option value="365">1 Year</option></select><input id="clientPhone" placeholder="Phone"></div>
+<div style="display:flex;gap:6px"><input id="pinInput" value="EV-0000"><button onclick="genPin()" class="btn" style="background:#334155;color:#fff">GEN PIN</button></div>
+<button class="btn" style="background:#22c55e;width:100%;padding:12px" onclick="createSchool()">✅ Create / Activate + Send WhatsApp</button></div>
 
 <div class="card">
-<h3>All Schools - Control Expiry / Block</h3>
-<input id="searchBox" placeholder="Search school/email" oninput="renderSchools()">
-<div style="overflow:auto;max-height:400px"><table><thead><tr><th>School</th><th>Email</th><th>PIN</th><th>Expiry</th><th>Status</th><th>Action</th></tr></thead><tbody id="schoolBody"></tbody></table></div>
-<div style="display:flex;gap:6px;margin-top:6px"><button class="btn" style="background:#6366f1" onclick="loadSchools()">🔄 Refresh</button><button class="btn" style="background:#ef4444" onclick="exportExcel()">📊 Export</button></div>
+<h3>All Schools - Full Control</h3>
+<input id="searchBox" placeholder="Search school/email" oninput="renderSchools()" style="background:#fff;color:#111">
+<div style="overflow:auto"><table><thead><tr><th>Email / School</th><th>PIN</th><th>Expiry</th><th>Status</th><th>Action</th></tr></thead><tbody id="schoolBody"></tbody></table></div>
+<div style="display:flex;gap:6px;margin-top:8px"><button class="btn" style="background:#6366f1;flex:1" onclick="loadSchools()">🔄 Refresh</button><button class="btn" style="background:#ef4444;flex:1" onclick="exportExcel()">📊 Export Excel</button></div>
 </div>
 
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import{getFirestore,collection,getDocs,doc,setDoc,deleteDoc}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import{getFirestore,collection,getDocs,doc,setDoc,deleteDoc,updateDoc}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 const firebaseConfig={apiKey:"AIzaSyBu37fV7AVatgXsA9YVbJQHELEMeCAfBhA",authDomain:"eduverse-a1d66.firebaseapp.com",projectId:"eduverse-a1d66",storageBucket:"eduverse-a1d66.firebasestorage.app",messagingSenderId:"657029326378",appId:"1:657029326378:web:662a4302b2a6f8af5e0553"};
 const app=initializeApp(firebaseConfig);const db=getFirestore(app);
 let allSchools=[];
-
 window.genPin=()=>{document.getElementById('pinInput').value='EV-'+Math.floor(1000+Math.random()*9000);}
-
 window.createSchool=async()=>{
- let name=document.getElementById('schoolName').value.trim(),email=document.getElementById('clientEmail').value.trim(),phone=document.getElementById('clientPhone').value.trim(),pin=document.getElementById('pinInput').value.trim(),days=parseInt(document.getElementById('plan').value);
+ let name=document.getElementById('schoolName').value.trim(),email=document.getElementById('clientEmail').value.trim().toLowerCase(),phone=document.getElementById('clientPhone').value.trim(),pin=document.getElementById('pinInput').value.trim(),days=parseInt(document.getElementById('plan').value);
  if(!name||!email||!pin){alert('Fill name,email,pin');return}
  let expiry=new Date();expiry.setDate(expiry.getDate()+days);
- let id=email.toLowerCase();
- await setDoc(doc(db,"students",id),{name,schoolName:name,email,phone,pin,PIN:pin,expiryDate:expiry.toISOString(),createdAt:new Date().toISOString(),status:'active',plan:days});
- alert('Created '+name+' PIN '+pin);
- window.open(`https://wa.me/234${phone.slice(-10)}?text=${encodeURIComponent(pin)}`,'_blank');
- loadSchools();
+ await setDoc(doc(db,"students",email),{name,schoolName:name,email,phone,pin,PIN:pin,expiryDate:expiry.toISOString(),createdAt:new Date().toISOString(),status:'active'});
+ alert('Created '+name); window.open(`https://wa.me/234${phone.slice(-10)}?text=${encodeURIComponent(pin)}`,'_blank'); loadSchools();
 }
-
 window.loadSchools=async()=>{
- try{
-  let snap=await getDocs(collection(db,"students"));
-  allSchools=[]; snap.forEach(d=>{allSchools.push({id:d.id,...d.data()});});
-  renderSchools();
- }catch(e){document.getElementById('schoolBody').innerHTML=`<tr><td colspan=6 style="color:#f87171">Error: ${e.message}<br>Fix Firestore Rules! Allow read/write</td></tr>`;}
+ let snap=await getDocs(collection(db,"students")); allSchools=[]; snap.forEach(d=>allSchools.push({id:d.id,...d.data()})); renderSchools();
 }
-
 window.renderSchools=()=>{
  let q=document.getElementById('searchBox').value.toLowerCase();
  let filtered=allSchools.filter(s=>(s.name||'').toLowerCase().includes(q)||(s.email||'').toLowerCase().includes(q));
  document.getElementById('totalSch').innerText=filtered.length;
- document.getElementById('activeSch').innerText=filtered.filter(s=>new Date(s.expiryDate||s.expiry||Date.now()+86400000) > new Date()).length;
+ document.getElementById('activeSch').innerText=filtered.filter(s=>new Date(s.expiryDate||Date.now()+86400000)>new Date() && s.status!=='blocked').length;
  document.getElementById('revSch').innerText='₦'+(filtered.length*15000).toLocaleString();
- if(!filtered.length){document.getElementById('schoolBody').innerHTML='<tr><td colspan=6>No schools yet - Create one above OR schools registered via index will appear here after you fix Rules and click Refresh</td></tr>';return}
+ if(!filtered.length){document.getElementById('schoolBody').innerHTML='<tr><td colspan=5>No schools</td></tr>';return}
  document.getElementById('schoolBody').innerHTML=filtered.map(r=>{
-  let pin=r.pin||r.PIN||''; let exp=r.expiryDate||r.expiry||''; let expStr=exp?new Date(exp).toLocaleDateString():'-'; let status=new Date(exp) > new Date()?'Active':'Expired';
-  return `<tr><td>${r.name||r.schoolName||''}</td><td>${r.email||''}</td><td><b style="color:#22c55e">${pin}</b><br><button onclick="navigator.clipboard.writeText('${pin}');alert('Copied ${pin}')" style="font-size:8px">COPY</button> <button onclick="window.open('https://wa.me/?text=${encodeURIComponent(pin)}','_blank')" style="font-size:8px;background:#111;color:#fff">PIN ONLY</button></td><td>${expStr}</td><td>${status}</td><td><button onclick="delSchool('${r.id}')" style="font-size:8px;background:#ef4444;color:#fff;border:none;border-radius:4px;padding:2px 4px">Delete</button></td></tr>`;
+  let pin=r.pin||r.PIN||''; let exp=r.expiryDate||r.expiry||''; let expStr=exp?new Date(exp).toLocaleDateString():'-'; let isExpired=exp&&new Date(exp)<new Date(); let status=r.status==='blocked'?'⛔ Blocked':isExpired?'Expired':'✅ Active';
+  return `<tr>
+  <td style="text-align:left"><b>${r.name||r.schoolName||''}</b><br><small>${r.email}</small></td>
+  <td><b style="color:#22c55e">${pin}</b><br><button class="btn" style="background:#fff;color:#111;font-size:8px" onclick="copyPin('${pin}')">COPY</button><button class="btn" style="background:#25D366;color:#fff;font-size:8px" onclick="sendPin('${pin}','${r.phone||''}')">PIN ONLY</button></td>
+  <td>${expStr}</td>
+  <td>${status}</td>
+  <td>
+    <button class="btn" style="background:#3b82f6;color:#fff" onclick="extendSchool('${r.id}',30)">+30 Days</button>
+    <button class="btn" style="background:#f59e0b;color:#111" onclick="blockSchool('${r.id}')">${r.status==='blocked'?'Unblock':'Block'}</button>
+    <button class="btn" style="background:#ef4444;color:#fff" onclick="delSchool('${r.id}')">Delete</button>
+  </td></tr>`;
  }).join('');
 }
-
-window.delSchool=async(id)=>{if(!confirm('Delete '+id+'?'))return; await deleteDoc(doc(db,"students",id)); loadSchools();}
-window.exportExcel=()=>{let csv='School,Email,PIN,Expiry\n';allSchools.forEach(r=>{csv+=`${r.name},${r.email},${r.pin||r.PIN},${r.expiryDate}\n`;});let blob=new Blob([csv],{type:'text/csv'});let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='schools.csv';a.click();}
-
-loadSchools(); genPin();
-</script>
-</body></html>
+window.copyPin=(pin)=>{navigator.clipboard.writeText(pin);alert('Copied: '+pin);}
+window.sendPin=(pin,phone)=>{if(phone){window.open(`https://wa.me/234${phone.slice(-10)}?text=${encodeURIComponent(pin)}`,'_blank');}else{window.open(`https://wa.me/?text=${encodeURIComponent(pin)}`,'_blank');}}
+window.extendSchool=async(id,days)=>{let r=allSchools.find(x=>x.id===id);let currentExp=new Date(r.expiryDate||Date.now());currentExp.setDate(currentExp.getDate()+days);await updateDoc(doc(db,"students",id),{expiryDate:currentExp.toISOString(),status:'active'});alert('Extended +'+days+' days');loadSchools();}
+window.blockSchool=async(id)=>{let r=allSchools.find(x=>x.id===id);let newStatus=r.status==='blocked'?'active':'blocked';await updateDoc(doc(db,"students",id),{status:newStatus});loadSchools();}
+window.delSchool=async(id)=>{if(!confirm('Delete '+id+'?'))return;await deleteDoc(doc(db,"students",id));loadSchools();}
+window.exportExcel=()=>{let csv='School,Email,PIN,Expiry,Status\n';allSchools.forEach(r=>{csv+=`${r.name},${r.email},${r.pin||r.PIN},${r.expiryDate},${r.status}\n`;});let blob=new Blob([csv],{type:'text/csv'});let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='schools.csv';a.click();}
+loadSchools();genPin();
+</script></body></html>
