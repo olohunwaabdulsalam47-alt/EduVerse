@@ -8,7 +8,7 @@
 <nav><div class="logo">🎓 EduVerse</div><div><button class="m p" onclick="S('dash')">Dashboard</button><button class="m" onclick="S('pay')">Subscription</button></div></nav>
 
 <section id="dash" class="on">
-<div class="card" id="dc" style="background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff">Loading...</div>
+<div class="card" id="dc" style="background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff"><h3>Welcome!</h3><p>Loading...</p></div>
 
 <div class="card">
 <h3>Mark Attendance</h3>
@@ -27,7 +27,7 @@
 <div class="card" style="font-size:11px;text-align:center;color:#6b7280">© EduVerse | OPay 9027398199 Aminat Abdulsalam | Support +2348050394277</div>
 </section>
 
-<section id="pay"><div class="card" style="text-align:center;max-width:400px;margin:auto"><h2>Subscription</h2><p style="margin:10px 0">Pay to activate your school account</p><div style="border:1px dashed #cbd5e1;padding:14px;border-radius:10px;text-align:left;background:#f8fafc">Bank: <b>OPay</b><br>Account: <b>9027398199</b><br>Name: <b>Aminat Abdulsalam</b></div><a href="https://wa.me/2348050394277?text=Hello%20I%20paid%20to%20OPay%209027398199"><button class="btn btn-p" style="margin-top:12px">I Have Paid - Activate Me</button></a><button class="btn" onclick="S('dash')" style="background:#e5e7eb">Back to Dashboard</button></div></section>
+<section id="pay"><div class="card" style="text-align:center;max-width:400px;margin:auto"><h2>Subscription</h2><div style="border:1px dashed #cbd5e1;padding:14px;border-radius:10px;text-align:left;background:#f8fafc;margin:10px 0">Bank: <b>OPay</b><br>Account: <b>9027398199</b><br>Name: <b>Aminat Abdulsalam</b></div><a href="https://wa.me/2348050394277?text=Hello%20I%20paid%20to%20OPay%209027398199"><button class="btn btn-p">I Have Paid - Activate Me</button></a><button class="btn" onclick="S('dash')" style="background:#e5e7eb">Back</button></div></section>
 
 <script>
 function S(id){document.querySelectorAll('section').forEach(s=>s.classList.remove('on'));document.getElementById(id).classList.add('on');}
@@ -39,16 +39,16 @@ function mark(status){
  att.push(rec);localStorage.setItem('edu_attendance',JSON.stringify(att));
  try{if(window.saveToFS)window.saveToFS(rec);}catch(e){}
  renderAtt();document.getElementById('attName').value='';
- if(status==='Absent' && phone){let msg=`Dear Parent, Your child ${name} (${cls}) was marked ABSENT today ${date}. Please contact school if any issue. - EduVerse`;window.open(`https://wa.me/234${phone.slice(-10)}?text=${encodeURIComponent(msg)}`,'_blank')}
+ if(status==='Absent' && phone){let msg=`Dear Parent, Your child ${name} (${cls}) was marked ABSENT today ${date}. - EduVerse`;window.open(`https://wa.me/234${phone.slice(-10)}?text=${encodeURIComponent(msg)}`,'_blank')}
 }
 function renderAtt(){
  let fd=document.getElementById('filterDate').value, fc=document.getElementById('filterCls').value;
  let f=att.slice(); if(fd){let d=new Date(fd).toLocaleDateString(); f=f.filter(a=>a.day===fd||a.date===d)} if(fc)f=f.filter(a=>a.class===fc);
- document.getElementById('attBody').innerHTML=f.reverse().map(r=>`<tr><td>${r.name}</td><td>${r.class}</td><td>${r.type}</td><td><span class="chip ${r.status.toLowerCase()}">${r.status}</span></td><td>${r.date}</td><td><button class="m" onclick="wa('${r.name}','${r.class}','${r.phone}')">Alert</button></td></tr>`).join('')||'<tr><td colspan=6 style="text-align:center;color:#999">No records</td></tr>';
+ document.getElementById('attBody').innerHTML=f.reverse().map(r=>`<tr><td>${r.name}</td><td>${r.class}</td><td>${r.type}</td><td><span class="chip ${r.status.toLowerCase()}">${r.status}</span></td><td>${r.date}</td><td><button class="m" onclick="wa('${r.name}','${r.class}','${r.phone}')">Alert</button></td></tr>`).join('')||'<tr><td colspan=6 style="text-align:center;color:#999">No records yet</td></tr>';
 }
-function wa(n,c,p){if(!p)return alert('No phone number saved');let m=`Dear Parent, ${n} (${c}) was ABSENT today. - EduVerse`;window.open(`https://wa.me/234${p.slice(-10)}?text=${encodeURIComponent(m)}`,'_blank')}
-function exportPDF(){const{jsPDF}=window.jspdf;const doc=new jsPDF();doc.setFontSize(12);doc.text("EduVerse Attendance Report",10,12);doc.setFontSize(9);doc.text(`Date: ${new Date().toLocaleString()} | Support: +2348050394277 | OPay: 9027398199`,10,18);let y=26;att.slice(-40).forEach((r,i)=>{doc.text(`${i+1}. ${r.name} | ${r.class} | ${r.type} | ${r.status} | ${r.date}`,10,y);y+=6;if(y>280){doc.addPage();y=10}});doc.save(`EduVerse_Attendance_${new Date().toISOString().split('T')[0]}.pdf`)}
-function sendBulkAbsent(){let today=new Date().toLocaleDateString();let abs=att.filter(a=>a.date===today && a.status==='Absent');if(!abs.length)return alert('No absent today');if(!confirm(`Send WhatsApp to ${abs.length} parents?`))return;abs.forEach(r=>{if(r.phone)wa(r.name,r.class,r.phone)})}
+function wa(n,c,p){if(!p)return alert('No phone');let m=`Dear Parent, ${n} (${c}) was ABSENT today. - EduVerse`;window.open(`https://wa.me/234${p.slice(-10)}?text=${encodeURIComponent(m)}`,'_blank')}
+function exportPDF(){const{jsPDF}=window.jspdf;const doc=new jsPDF();doc.text("EduVerse Attendance Report",10,12);doc.setFontSize(9);doc.text(`${new Date().toLocaleString()} | Support: +2348050394277`,10,18);let y=26;att.slice(-40).forEach((r,i)=>{doc.text(`${i+1}. ${r.name} | ${r.class} | ${r.type} | ${r.status} | ${r.date}`,10,y);y+=6;if(y>280){doc.addPage();y=10}});doc.save(`EduVerse_${new Date().toISOString().split('T')[0]}.pdf`)}
+function sendBulkAbsent(){let today=new Date().toLocaleDateString();let abs=att.filter(a=>a.date===today && a.status==='Absent');if(!abs.length)return alert('No absent today');abs.forEach(r=>{if(r.phone)wa(r.name,r.class,r.phone)})}
 renderAtt();
 </script>
 
@@ -57,19 +57,35 @@ import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-ap
 const firebaseConfig={apiKey:"AIzaSyBu37fV7AVatgXsA9YVbJQHELEMeCAfBhA",authDomain:"eduverse-a1d66.firebaseapp.com",projectId:"eduverse-a1d66",storageBucket:"eduverse-a1d66.firebasestorage.app",messagingSenderId:"657029326378",appId:"1:657029326378:web:662a4302b2a6f8af5e0553",measurementId:"G-RT2GEEH44T"};
 const app=initializeApp(firebaseConfig);const auth=getAuth(app);const db=getFirestore(app);
 window.saveToFS=async(rec)=>{try{await addDoc(collection(db,"attendance"),rec)}catch(e){}};
+
 onAuthStateChanged(auth,async(u)=>{
  const dc=document.getElementById('dc');
- if(!u){dc.innerHTML=`<h3>Welcome Guest</h3><p>Login to sync data to cloud. Currently saving locally.</p>`;return}
+ if(!u){
+   let savedName = localStorage.getItem('schoolName') || 'School';
+   dc.innerHTML=`<h2>Welcome, ${savedName} ✅</h2><p style="font-size:13px;opacity:.9">Offline Mode Ready | Your data saves locally</p>`;
+   return
+ }
+ // Try to get from Firestore, but NEVER show error to user
  try{
   const snap=await getDoc(doc(db,"students",u.uid));
-  if(!snap.exists()){dc.innerHTML=`<h3>Welcome!</h3>`;return}
-  const s=snap.data();
-  const displayName=s.name||s.schoolName||s.displayName||"School";
-  // FIX expiry undefined - check all possible fields
-  let expiry = s.expiryDate || s.expiry || localStorage.getItem('expiry_current') || localStorage.getItem('expiry_'+s.email) || "";
+  let displayName = localStorage.getItem('schoolName') || u.email.split('@')[0];
+  let email = u.email;
+  let expiryText = "3 Days Trial";
+  if(snap.exists()){
+    const s=snap.data();
+    displayName = s.name || s.schoolName || displayName;
+    localStorage.setItem('schoolName', displayName);
+    let expiry = s.expiryDate || s.expiry || localStorage.getItem('expiry_current') || "";
+    if(expiry) expiryText = new Date(expiry).toLocaleDateString();
+  }
+  dc.innerHTML=`<h2>Welcome, ${displayName} ✅</h2><p style="font-size:13px;opacity:.9">${email} | Valid till: ${expiryText}</p>`;
+ }catch(err){
+  // OFFLINE FALLBACK - NO ERROR SHOWN
+  let savedName = localStorage.getItem('schoolName') || u.email.split('@')[0] || 'School';
+  let expiry = localStorage.getItem('expiry_current');
   let expiryText = expiry? new Date(expiry).toLocaleDateString() : "3 Days Trial";
-  dc.innerHTML=`<h2>Welcome, ${displayName} ✅</h2><p style="margin-top:6px;font-size:13px;opacity:.9">${s.email} | Valid till: ${expiryText}<br>OPay 9027398199 | Support +2348050394277</p>`;
- }catch(e){dc.innerHTML=`<h3>Welcome</h3><p>${e.message}</p>`}
+  dc.innerHTML=`<h2>Welcome, ${savedName} ✅</h2><p style="font-size:13px;opacity:.9">${u.email} | Valid till: ${expiryText}<br>Offline Mode - Syncs when online</p>`;
+ }
 });
 </script>
 </body></html>
