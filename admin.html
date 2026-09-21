@@ -1,152 +1,68 @@
 <!DOCTYPE html>
-<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EduVerse Super Admin</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}body{background:#0f172a;color:#fff;padding:12px}
-.card{background:#1e293b;padding:14px;border-radius:12px;margin:8px 0}
-input,select{width:100%;padding:10px;border-radius:8px;border:none;margin:4px 0}
-.btn{width:100%;padding:10px;border:none;border-radius:8px;font-weight:800;margin:4px 0;cursor:pointer}
-.btn-p{background:#4f46e5;color:#fff}.btn-g{background:#16a34a;color:#fff}.btn-d{background:#ef4444;color:#fff}
-table{width:100%;border-collapse:collapse;font-size:11px}th,td{border:1px solid #334;padding:6px}th{background:#111}
-.pin{font-family:monospace;background:#111;padding:3px 6px;border-radius:4px;color:#22c55e}
-</style></head><body>
-<h2 style="text-align:center">🔐 EduVerse SUPER ADMIN</h2>
-<p style="text-align:center;font-size:11px;opacity:.7">OPay 9027398199 Aminat Abdulsalam | CEO Abdulsalam Daud</p>
-
-<div id="loginDiv" class="card" style="max-width:400px;margin:20px auto">
-<h3>Admin Login</h3>
-<input id="adminPass" type="password" placeholder="Enter Admin Password (default: admin123)">
-<button class="btn btn-p" onclick="adminLogin()">Login</button>
-<small style="font-size:10px">Change password in code line 85 - Search ADMIN_PASS</small>
-</div>
-
-<div id="adminDiv" style="display:none">
-<div class="card" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center">
-<div><b id="totalSchools">0</b><br><small>Total Schools</small></div>
-<div><b id="activeSchools">0</b><br><small>Active</small></div>
-<div><b id="totalRev">₦0</b><br><small>Est. Revenue</small></div>
-</div>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Admin</title>
+<style>body{background:#0f172a;color:#fff;font-family:Arial;padding:10px}input,select{width:100%;padding:10px;border-radius:8px;border:none;margin:4px 0}.btn{padding:10px;border-radius:8px;border:none;font-weight:800;cursor:pointer;width:100%;margin:4px 0}.card{background:#1e293b;padding:12px;border-radius:12px;margin:8px 0}table{width:100%;font-size:10px;border-collapse:collapse}th,td{border:1px solid #334;padding:4px}</style></head><body>
+<div class="card" style="display:flex;justify-content:space-between"><div><b id="totalSch">0</b><br><small>Total Schools</small></div><div><b id="activeSch">0</b><br><small>Active</small></div><div><b id="revSch">₦0</b><br><small>Est. Revenue</small></div></div>
 
 <div class="card">
 <h3>Generate New PIN / Activate School</h3>
-<div style="display:flex;gap:6px"><input id="sName" placeholder="School Name"><input id="sEmail" placeholder="Client Email (used in login)"></div>
-<div style="display:flex;gap:6px"><select id="sPlan"><option value="7">7 Days Trial</option><option value="30" selected>30 Days - ₦15k</option><option value="90">90 Days - ₦35k (Term)</option><option value="365">365 Days - ₦100k</option></select><input id="sPhone" placeholder="Client Phone"></div>
-<div style="display:flex;gap:6px"><input id="sPin" placeholder="PIN (auto)" readonly><button style="padding:10px;background:#334;color:#fff;border:none;border-radius:8px" onclick="genPin()">GEN PIN</button></div>
-<button class="btn btn-g" onclick="createSchool()">✅ Create / Activate School + Send WhatsApp</button>
-<div style="font-size:10px;background:#111;padding:8px;border-radius:6px;margin-top:6px">PIN Format: EV-XXXX | Expiry auto calculated | Client will login with email + PIN as password</div>
+<div style="display:flex;gap:6px"><input id="schoolName" placeholder="School Name"><input id="clientEmail" placeholder="Client Email"></div>
+<div style="display:flex;gap:6px"><select id="plan"><option value="30">30 Days - ₦15k</option><option value="60">60 Days - ₦25k</option><option value="90">90 Days - ₦40k</option><option value="365">1 Year - ₦100k</option></select><input id="clientPhone" placeholder="Client Phone"></div>
+<div style="display:flex;gap:6px"><input id="pinInput" value="EV-0000"><button onclick="genPin()" style="padding:10px;border-radius:8px;background:#334155;color:#fff;border:none">GEN PIN</button></div>
+<button class="btn" style="background:#22c55e;color:#111" onclick="createSchool()">✅ Create / Activate School + Send WhatsApp</button>
+<small>PIN Format: EV-XXXX | Expiry auto | Client login with email + PIN</small>
 </div>
 
 <div class="card">
 <h3>All Schools - Control Expiry / Block</h3>
-<input id="search" placeholder="Search school/email" oninput="renderSchools()"><div style="overflow:auto;max-height:400px;margin-top:8px"><table><thead><tr><th>School</th><th>Email</th><th>PIN</th><th>Expiry</th><th>Status</th><th>Action</th></tr></thead><tbody id="schoolBody"></tbody></table></div>
-<div style="display:flex;gap:6px;margin-top:8px"><button class="btn btn-p" onclick="loadSchools()">🔄 Refresh</button><button class="btn btn-d" onclick="exportSchools()">📊 Export Schools Excel</button></div>
-</div>
-
-<div class="card">
-<h3>Quick Actions</h3>
-<div style="display:flex;gap:6px"><button class="btn btn-p" onclick="extendAll()">+30 Days All</button><button class="btn" style="background:#f59e0b" onclick="alert('Backup Firestore from Firebase Console > Firestore > Export')">Backup DB</button></div>
-</div>
+<input id="searchBox" placeholder="Search school/email" oninput="renderSchools()">
+<div style="overflow:auto;max-height:400px"><table><thead><tr><th>School</th><th>Email</th><th>PIN</th><th>Expiry</th><th>Status</th><th>Action</th></tr></thead><tbody id="schoolBody"></tbody></table></div>
+<div style="display:flex;gap:6px;margin-top:6px"><button class="btn" style="background:#6366f1" onclick="loadSchools()">🔄 Refresh</button><button class="btn" style="background:#ef4444" onclick="exportExcel()">📊 Export</button></div>
 </div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, getDocs, doc, setDoc, updateDoc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-const firebaseConfig = {apiKey:"AIzaSyBu37fV7AVatgXsA9YVbJQHELEMeCAfBhA",authDomain:"eduverse-a1d66.firebaseapp.com",projectId:"eduverse-a1d66",storageBucket:"eduverse-a1d66.firebasestorage.app",messagingSenderId:"657029326378",appId:"1:657029326378:web:662a4302b2a6f8af5e0553",measurementId:"G-RT2GEEH44T"};
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-const ADMIN_PASS = "admin123"; // CHANGE THIS!
-window.adminLogin = function(){
- if(document.getElementById('adminPass').value===ADMIN_PASS){
-   document.getElementById('loginDiv').style.display='none';
-   document.getElementById('adminDiv').style.display='block';
-   loadSchools();
- }else alert('Wrong password');
-}
-
-window.genPin = function(){
- let pin='EV-'+Math.floor(1000+Math.random()*9000);
- document.getElementById('sPin').value=pin;
- return pin;
-}
-genPin();
-
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import{getFirestore,collection,getDocs,doc,setDoc,deleteDoc}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+const firebaseConfig={apiKey:"AIzaSyBu37fV7AVatgXsA9YVbJQHELEMeCAfBhA",authDomain:"eduverse-a1d66.firebaseapp.com",projectId:"eduverse-a1d66",storageBucket:"eduverse-a1d66.firebasestorage.app",messagingSenderId:"657029326378",appId:"1:657029326378:web:662a4302b2a6f8af5e0553"};
+const app=initializeApp(firebaseConfig);const db=getFirestore(app);
 let allSchools=[];
 
-window.loadSchools = async function(){
- const q = await getDocs(collection(db,"students"));
- allSchools=[];
- q.forEach(d=>{allSchools.push({id:d.id,...d.data()});});
- renderSchools();
-}
+window.genPin=()=>{document.getElementById('pinInput').value='EV-'+Math.floor(1000+Math.random()*9000);}
 
-window.renderSchools = function(){
- let s=document.getElementById('search').value.toLowerCase();
- let f=allSchools.filter(x=> (x.name||'').toLowerCase().includes(s) || (x.email||'').toLowerCase().includes(s));
- document.getElementById('totalSchools').innerText=allSchools.length;
- let active=allSchools.filter(x=>{let exp=x.expiryDate||x.expiry;return exp && new Date(exp) > new Date();}).length;
- document.getElementById('activeSchools').innerText=active;
- document.getElementById('totalRev').innerText='₦'+(allSchools.length*15000).toLocaleString();
- document.getElementById('schoolBody').innerHTML=f.map(r=>{
-   let exp=r.expiryDate||r.expiry||'No expiry';
-   let expDate=exp?new Date(exp):null;
-   let status=expDate && expDate > new Date()? '<span style="color:#22c55e">Active</span>' : '<span style="color:#ef4444">Expired</span>';
-   let pin=r.pin||r.PIN||'EV-'+Math.floor(1000+Math.random()*9000);
-   return `<tr><td>${r.name||r.schoolName||'No name'}</td><td>${r.email||''}</td><td class="pin">${pin}</td><td>${expDate?expDate.toLocaleDateString():exp}</td><td>${status}</td><td><button onclick="extendSchool('${r.id}',30)" style="font-size:9px;padding:4px;background:#16a34a;color:#fff;border:none;border-radius:4px">+30d</button> <button onclick="blockSchool('${r.id}')" style="font-size:9px;padding:4px;background:#ef4444;color:#fff;border:none;border-radius:4px">Block</button> <button onclick="sendWA('${r.email}','${pin}','${r.name||''}','${exp}')" style="font-size:9px;padding:4px;background:#25D366;color:#fff;border:none;border-radius:4px">WA</button></td></tr>`;
- }).join('')||'<tr><td colspan=6>No schools yet - Create one above</td></tr>';
-}
-
-window.createSchool = async function(){
- let name=document.getElementById('sName').value.trim(),email=document.getElementById('sEmail').value.trim(),phone=document.getElementById('sPhone').value.trim(),pin=document.getElementById('sPin').value,plan=parseInt(document.getElementById('sPlan').value);
- if(!name||!email)return alert('Name & Email required');
- let expiry=new Date(); expiry.setDate(expiry.getDate()+plan);
- let id=email.replace(/[^a-z0-9]/gi,'_').toLowerCase()+'_'+Date.now();
- // Save to Firestore students collection
- await setDoc(doc(db,"students",id),{
-   name:name, schoolName:name, email:email, phone:phone, pin:pin, PIN:pin,
-   expiryDate:expiry.toISOString(), expiry:expiry.toISOString(),
-   plan:plan+' days', createdAt:new Date().toISOString(), status:'active', role:'school'
- });
- alert(`School Created!\nPIN: ${pin}\nExpiry: ${expiry.toLocaleDateString()}\n\nNow send WhatsApp to client.`);
- sendWA(email,pin,name,expiry.toISOString());
+window.createSchool=async()=>{
+ let name=document.getElementById('schoolName').value.trim(),email=document.getElementById('clientEmail').value.trim(),phone=document.getElementById('clientPhone').value.trim(),pin=document.getElementById('pinInput').value.trim(),days=parseInt(document.getElementById('plan').value);
+ if(!name||!email||!pin){alert('Fill name,email,pin');return}
+ let expiry=new Date();expiry.setDate(expiry.getDate()+days);
+ let id=email.toLowerCase();
+ await setDoc(doc(db,"students",id),{name,schoolName:name,email,phone,pin,PIN:pin,expiryDate:expiry.toISOString(),createdAt:new Date().toISOString(),status:'active',plan:days});
+ alert('Created '+name+' PIN '+pin);
+ window.open(`https://wa.me/234${phone.slice(-10)}?text=${encodeURIComponent(pin)}`,'_blank');
  loadSchools();
- genPin();
- document.getElementById('sName').value='';document.getElementById('sEmail').value='';
 }
 
-window.extendSchool = async function(id,days){
+window.loadSchools=async()=>{
  try{
-   let ref=doc(db,"students",id);let snap=await getDoc(ref);if(!snap.exists())return alert('Not found');
-   let data=snap.data();let currentExp=new Date(data.expiryDate||data.expiry||new Date());if(currentExp < new Date()) currentExp=new Date();
-   currentExp.setDate(currentExp.getDate()+days);
-   await updateDoc(ref,{expiryDate:currentExp.toISOString(),expiry:currentExp.toISOString(),status:'active'});
-   alert(`Extended +${days} days till ${currentExp.toLocaleDateString()}`);loadSchools();
- }catch(e){alert(e.message)}
+  let snap=await getDocs(collection(db,"students"));
+  allSchools=[]; snap.forEach(d=>{allSchools.push({id:d.id,...d.data()});});
+  renderSchools();
+ }catch(e){document.getElementById('schoolBody').innerHTML=`<tr><td colspan=6 style="color:#f87171">Error: ${e.message}<br>Fix Firestore Rules! Allow read/write</td></tr>`;}
 }
 
-window.blockSchool = async function(id){
- if(!confirm('Block this school? They cannot login after expiry'))return;
- let past=new Date(); past.setDate(past.getDate()-1);
- await updateDoc(doc(db,"students",id),{expiryDate:past.toISOString(),expiry:past.toISOString(),status:'blocked'});
- alert('Blocked');loadSchools();
+window.renderSchools=()=>{
+ let q=document.getElementById('searchBox').value.toLowerCase();
+ let filtered=allSchools.filter(s=>(s.name||'').toLowerCase().includes(q)||(s.email||'').toLowerCase().includes(q));
+ document.getElementById('totalSch').innerText=filtered.length;
+ document.getElementById('activeSch').innerText=filtered.filter(s=>new Date(s.expiryDate||s.expiry||Date.now()+86400000) > new Date()).length;
+ document.getElementById('revSch').innerText='₦'+(filtered.length*15000).toLocaleString();
+ if(!filtered.length){document.getElementById('schoolBody').innerHTML='<tr><td colspan=6>No schools yet - Create one above OR schools registered via index will appear here after you fix Rules and click Refresh</td></tr>';return}
+ document.getElementById('schoolBody').innerHTML=filtered.map(r=>{
+  let pin=r.pin||r.PIN||''; let exp=r.expiryDate||r.expiry||''; let expStr=exp?new Date(exp).toLocaleDateString():'-'; let status=new Date(exp) > new Date()?'Active':'Expired';
+  return `<tr><td>${r.name||r.schoolName||''}</td><td>${r.email||''}</td><td><b style="color:#22c55e">${pin}</b><br><button onclick="navigator.clipboard.writeText('${pin}');alert('Copied ${pin}')" style="font-size:8px">COPY</button> <button onclick="window.open('https://wa.me/?text=${encodeURIComponent(pin)}','_blank')" style="font-size:8px;background:#111;color:#fff">PIN ONLY</button></td><td>${expStr}</td><td>${status}</td><td><button onclick="delSchool('${r.id}')" style="font-size:8px;background:#ef4444;color:#fff;border:none;border-radius:4px;padding:2px 4px">Delete</button></td></tr>`;
+ }).join('');
 }
 
-window.sendWA = function(email,pin,name,expiry){
- let expDate=new Date(expiry); let expStr=expDate.toLocaleDateString();
- let msg=`*EduVerse Activated* 🎓\n\nSchool: ${name}\nLogin Email: ${email}\nPIN/Password: ${pin}\nValid till: ${expStr}\n\nLogin: https://olohunwaabdulsalam47-alt.github.io/EduVerse/\n\nOPay: 9027398199 Aminat Abdulsalam\nSupport: +2348050394277\nCEO: Abdulsalam Daud`;
- window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`,'_blank');
-}
+window.delSchool=async(id)=>{if(!confirm('Delete '+id+'?'))return; await deleteDoc(doc(db,"students",id)); loadSchools();}
+window.exportExcel=()=>{let csv='School,Email,PIN,Expiry\n';allSchools.forEach(r=>{csv+=`${r.name},${r.email},${r.pin||r.PIN},${r.expiryDate}\n`;});let blob=new Blob([csv],{type:'text/csv'});let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='schools.csv';a.click();}
 
-window.exportSchools = function(){
- let csv="School,Email,Phone,PIN,Expiry,Status\n";
- allSchools.forEach(r=>{let exp=r.expiryDate||r.expiry||'';csv+=`${(r.name||'').replace(/,/g,' ')},${r.email||''},${r.phone||''},${r.pin||r.PIN||''},${exp},${r.status||''}\n`;});
- let blob=new Blob([csv],{type:'text/csv'});let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='EduVerse_Schools.csv';a.click();
-}
-
-window.extendAll = async function(){
- if(!confirm('Extend ALL schools +30 days?'))return;
- for(let s of allSchools){await extendSchool(s.id,30);}
-}
+loadSchools(); genPin();
 </script>
 </body></html>
