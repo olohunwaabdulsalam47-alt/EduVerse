@@ -17,13 +17,13 @@
 <div class="authBox">
 <h2 id="authTitle">🎓 School Login</h2>
 <p style="font-size:11px;text-align:center;opacity:.7;margin-bottom:8px">Enter email + PIN given by admin. First time click Register.</p>
-<input id="authEmail" placeholder="School Email e.g. noor@gmail.com">
+<input id="authEmail" placeholder="School Email e.g. noorus@gmail.com">
 <input id="authPass" type="password" placeholder="PIN / Password e.g. EV-1234">
 <input id="authName" placeholder="School Name (for Register only) - e.g. مركز نور السلام" style="display:none">
 <p id="authMsg" style="font-size:11px;color:#ef4444;text-align:center;margin:4px 0"></p>
-<button class="btn btn-p" onclick="doLogin()">Login</button>
+<button class="btn btn-p" onclick="doLogin()" id="loginBtn">Login</button>
 <button class="btn btn-d" onclick="toggleAuthMode()" id="toggleBtn">New? Click to Register</button>
-<button class="btn" style="background:#f1f5f9;color:#111" onclick="doRegister()" id="regBtn" style="display:none">Create Account</button>
+<button class="btn" style="background:#f1f5f9;color:#111;display:none" onclick="doRegister()" id="regBtn">Create Account</button>
 <div style="font-size:10px;text-align:center;margin-top:10px;opacity:.6">OPay: 9027398199 Aminat | Support: +2348050394277<br>CEO Abdulsalam Daud</div>
 </div>
 </div>
@@ -31,7 +31,7 @@
 <nav><div class="logo"><img id="logoImg" src="" style="display:none"><span id="logoTxt">🎓 EduVerse</span></div><div style="display:flex;align-items:center;gap:4px"><button class="m p" onclick="S('dash')">Home</button><button class="m" onclick="S('att')">Attendance</button><button class="m" onclick="S('fees')">Fees</button><button class="m" onclick="S('res')">Result</button><button class="m" onclick="S('idc')">ID Card</button><button class="m" onclick="S('tools')">Tools</button><button class="m" onclick="S('data')" style="background:#111;color:#fff">Data</button><button class="m" onclick="doLogout()" style="background:#fee2e2;color:#991b1b">Logout</button></div></nav>
 
 <section id="dash" class="on">
-<div class="card" id="dc" style="background:linear-gradient(135deg,var(--p),#7c3aed);color:#fff"><h3>Welcome!</h3></div>
+<div class="card" id="dc" style="background:linear-gradient(135deg,var(--p),#7c3aed);color:#fff"><h3>Loading license...</h3></div>
 <div class="row"><div class="card" style="flex:1;text-align:center"><b id="tInc">₦0</b><br><small>Total Income</small></div><div class="card" style="flex:1;text-align:center"><b id="tDebt">₦0</b><br><small>Total Debt</small></div><div class="card" style="flex:1;text-align:center"><b id="tRes">0</b><br><small>Results</small></div></div>
 <div class="card"><canvas id="perfChart" height="110"></canvas></div>
 <div class="card"><h3>🏫 Campus Selector</h3><div class="row"><select id="campusSel" onchange="switchCampus()"><option>Main Campus</option></select><input id="newCampus" placeholder="Add New Campus"><button class="m p" onclick="addCampus()">Add</button></div></div>
@@ -77,7 +77,7 @@
 <script>
 function S(id){document.querySelectorAll('section').forEach(s=>s.classList.remove('on'));document.getElementById(id).classList.add('on');if(id==='dash')drawChart();}
 let campus=localStorage.getItem('edu_campus')||'Main Campus';function getKey(k){return campus+'_'+k;}
-let att=JSON.parse(localStorage.getItem(getKey('edu_attendance'))||'[]');let fees=JSON.parse(localStorage.getItem(getKey('edu_fees'))||'[]');let results=JSON.parse(localStorage.getItem(getKey('edu_results'))||'[]');let notices=JSON.parse(localStorage.getItem(getKey('edu_notices'))||'[]');let comps=JSON.parse(localStorage.getItem(getKey('edu_comps'))||'[]');
+let att=JSON.parse(localStorage.getItem(getKey('edu_attendance'))||'[]');let fees=JSON.parse(localStorage.getItem(getKey('edu_fees'))||'[]');let results=JSON.parse(localStorage.getItem(getKey('edu_results'))||'[]');let notices=JSON.parse(localStorage.getItem(getKey('edu_notices'))||'[]');
 let subjects=['Mathematics','English','Basic Science','Social Studies','Civic Education','Computer','Agric Science','PHE','CRS/IRS'];
 let subGrid=document.getElementById('subGrid');subjects.forEach((s,i)=>{subGrid.innerHTML+=`<div style="border:1px solid #ddd;padding:5px;border-radius:8px;font-size:9px;background:var(--bg)"><small style="font-weight:700">${s}</small><div class="row"><input id="ca${i}" type="number" placeholder="CA" oninput="calcRes()"><input id="ex${i}" type="number" placeholder="Exam" oninput="calcRes()"><input id="tot${i}" readonly style="background:#eee"></div></div>`;});
 function loadImg(input,type){let f=input.files[0];if(!f)return;let r=new FileReader();r.onload=e=>{let v=e.target.result;if(type==='idPhoto'){document.getElementById('idPhotoData').value=v;document.getElementById('idFrontPhoto').src=v;}else document.getElementById(type+'Data').value=v;};r.readAsDataURL(f);}
@@ -132,8 +132,10 @@ window.toggleAuthMode=()=>{
  mode=mode==='login'?'register':'login';
  document.getElementById('authName').style.display=mode==='register'?'block':'none';
  document.getElementById('regBtn').style.display=mode==='register'?'block':'none';
+ document.getElementById('loginBtn').style.display=mode==='register'?'none':'block';
  document.getElementById('authTitle').innerText=mode==='register'?'🎓 Register School':'🎓 School Login';
  document.getElementById('toggleBtn').innerText=mode==='register'?'Already have account? Login':'New? Click to Register';
+ document.getElementById('authMsg').innerText='';
 }
 
 window.doLogin=async()=>{
@@ -147,7 +149,9 @@ window.doRegister=async()=>{
  if(!e||!p||!n){document.getElementById('authMsg').innerText='Enter email, PIN and school name';return}
  try{
   let cred=await createUserWithEmailAndPassword(auth,e,p);
-  await setDoc(doc(db,"students",cred.user.uid),{name:n,schoolName:n,email:e,pin:p,PIN:p,createdAt:new Date().toISOString(),expiryDate:new Date(Date.now()+30*24*60*60*1000).toISOString(),status:'active'});
+  let expiry=new Date(); expiry.setDate(expiry.getDate()+3); // 3 days trial
+  await setDoc(doc(db,"students",cred.user.uid),{name:n,schoolName:n,email:e,pin:p,PIN:p,createdAt:new Date().toISOString(),expiryDate:expiry.toISOString(),status:'active'});
+  await setDoc(doc(db,"students",e.toLowerCase()),{name:n,schoolName:n,email:e,pin:p,PIN:p,createdAt:new Date().toISOString(),expiryDate:expiry.toISOString(),status:'active'});
   localStorage.setItem('schoolName',n);
  }catch(err){document.getElementById('authMsg').innerText=err.message}
 }
@@ -155,20 +159,43 @@ window.doRegister=async()=>{
 window.doLogout=async()=>{await signOut(auth);location.reload();}
 
 onAuthStateChanged(auth,async(u)=>{
- const overlay=document.getElementById('authOverlay'); const dc=document.getElementById('dc');
+ const overlay=document.getElementById('authOverlay');
+ const dc=document.getElementById('dc');
  if(!u){overlay.style.display='flex';return}
  overlay.style.display='none';
  try{
   const snap=await getDoc(doc(db,"students",u.uid));
-  let name=localStorage.getItem('edu_wl_name')||localStorage.getItem('schoolName')||'School';
-  let expiry='';
-  if(snap.exists()){
-   let s=snap.data(); name=s.name||s.schoolName||name; expiry=s.expiryDate||s.expiry||'';
+  let snap2=null;
+  try{ snap2=await getDoc(doc(db,"students",u.email.toLowerCase())); }catch(e){}
+  let data = snap.exists()? snap.data() : (snap2 && snap2.exists()? snap2.data() : null);
+
+  let name=localStorage.getItem('edu_wl_name')||localStorage.getItem('schoolName')||u.email||'School';
+  let expiry=''; let status='active'; let created='';
+  if(data){
+   name=data.name||data.schoolName||name; expiry=data.expiryDate||data.expiry||''; status=data.status||'active'; created=data.createdAt||'';
    localStorage.setItem('schoolName',name);
-   if(expiry){let expDate=new Date(expiry); if(expDate < new Date()){dc.innerHTML=`<h3>⚠️ Subscription Expired on ${expDate.toLocaleDateString()}</h3><p>Contact Admin +2348050394277 OPay 9027398199</p>`; return}}
+   let now=new Date(); let expDate=expiry?new Date(expiry):null;
+   // 3 DAYS TRIAL LOGIC
+   if(!expiry && created){ let cd=new Date(created); let te=new Date(cd); te.setDate(te.getDate()+3); expDate=te; expiry=te.toISOString(); }
+   else if(!expDate && created){ let cd=new Date(created); let te=new Date(cd); te.setDate(te.getDate()+3); expDate=te; }
+
+   if(expDate && now > expDate || status==='blocked'){
+     let reason=status==='blocked'?'⛔ BLOCKED BY ADMIN':'🔒 SUBSCRIPTION EXPIRED';
+     dc.innerHTML=`<div style="text-align:center;padding:15px;background:#fee2e2;color:#991b1b;border-radius:12px"><h2>${reason}</h2><p>Expired on ${expDate?expDate.toLocaleDateString():'N/A'}</p><p style="margin-top:10px;background:#fff;color:#111;padding:10px;border-radius:8px">OPay: 9027398199 Aminat<br>Admin: +2348050394277<br>Pay ₦15k for 30 days</p><button onclick="doLogout()" style="margin-top:10px;padding:8px 16px;background:#111;color:#fff;border:none;border-radius:8px">Logout</button></div>`;
+     document.querySelectorAll('section:not(#dash)').forEach(s=>s.innerHTML=`<div class="card" style="text-align:center"><h2>🔒 LOCKED - Pay to Unlock</h2><p>Contact +2348050394277</p><p>OPay 9027398199</p></div>`);
+     return;
+   }
+   if(expDate){
+     let diffDays=Math.ceil((expDate - now)/(1000*60*60*24));
+     let badge='';
+     if(diffDays<=5 && diffDays>0){ badge=`<span style="background:#fef3c7;color:#92400e;padding:3px 10px;border-radius:20px;font-size:11px;margin-left:6px">⚠️ ${diffDays} days left</span>`; if(diffDays<=3){ setTimeout(()=>{alert(`⚠️ License expires in ${diffDays} days! (${expDate.toLocaleDateString()})\nPay OPay 9027398199\nAdmin +2348050394277`);},2000);} }
+     else if(diffDays>5){ badge=`<span style="background:#dcfce7;color:#166534;padding:3px 10px;border-radius:20px;font-size:11px">✅ ${diffDays} days left</span>`; }
+     dc.innerHTML=`<h2>Welcome, ${name} ${badge}</h2><p style="font-size:11px">Campus: ${localStorage.getItem('edu_campus')||'Main Campus'} | Valid till ${expDate.toLocaleDateString()} | Support +2348050394277</p>`;
+     return;
+   }
   }
-  dc.innerHTML=`<h2>Welcome, ${name} ✅</h2><p style="font-size:11px">Campus: ${localStorage.getItem('edu_campus')||'Main Campus'} | ${expiry?'Valid till '+new Date(expiry).toLocaleDateString():''} | Support +2348050394277</p>`;
- }catch(e){dc.innerHTML=`<h2>Welcome, ${localStorage.getItem('schoolName')||'School'} ✅</h2>`}
+  dc.innerHTML=`<h2>Welcome, ${name} ✅</h2><p style="font-size:11px">Campus: ${localStorage.getItem('edu_campus')||'Main Campus'} | Free Trial | Support +2348050394277</p>`;
+ }catch(e){ console.log(e); dc.innerHTML=`<h2>Welcome, ${localStorage.getItem('schoolName')||'School'} ✅</h2>`; }
 });
 </script>
 </body></html>
