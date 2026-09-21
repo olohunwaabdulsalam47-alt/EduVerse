@@ -1,58 +1,81 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EduVerse - Complete School Manager</title>
+<title>EduVerse - Ultimate Complete Manager</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 :root{--p:#4f46e5;--bg:#f6f7ff;--card:#fff;--text:#111}
-body{margin:0;font-family:Arial;background:var(--bg);color:var(--text)}
-*{box-sizing:border-box}
+body{margin:0;font-family:Arial;background:var(--bg);color:var(--text)}*{box-sizing:border-box}
 nav{background:#fff;padding:8px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:99;box-shadow:0 2px 10px rgba(0,0,0,.1);overflow-x:auto;gap:3px}
 .logo{font-weight:900;color:var(--p);font-size:12px;white-space:nowrap}
-.m{padding:8px 9px;border-radius:8px;border:1px solid var(--p);background:#fff;color:var(--p);font-weight:700;font-size:9.5px;cursor:pointer;white-space:nowrap;min-width:fit-content}
+.m{padding:8px 9px;border-radius:8px;border:1px solid var(--p);background:#fff;color:var(--p);font-weight:700;font-size:9px;cursor:pointer;white-space:nowrap}
 .m.on{background:var(--p);color:#fff}
-section{display:none;padding:10px;max-width:1100px;margin:auto}
-section.active{display:block!important}
+section{display:none;padding:10px;max-width:1100px;margin:auto}section.active{display:block!important}
 .card{background:var(--card);padding:14px;border-radius:14px;box-shadow:0 6px 20px rgba(0,0,0,.06);margin:8px 0}
 input,select,textarea{width:100%;padding:10px;border:1px solid #e5e7eb;border-radius:9px;margin:4px 0;font-size:12px;background:var(--card);color:var(--text)}
 .btn{width:100%;padding:11px;border:none;border-radius:10px;font-weight:800;margin-top:6px;cursor:pointer;font-size:12px}
 .btn-p{background:var(--p);color:#fff}.btn-g{background:#25D366;color:#fff}.btn-d{background:#111;color:#fff}
-.row{display:flex;gap:6px}
-table{width:100%;border-collapse:collapse;font-size:10px}th,td{border:1px solid #eef;padding:6px;text-align:left}th{background:var(--bg);font-size:10px}
+.row{display:flex;gap:6px}table{width:100%;border-collapse:collapse;font-size:10px}th,td{border:1px solid #eef;padding:6px;text-align:left}th{background:var(--bg)}
 #authOverlay{position:fixed;inset:0;background:rgba(15,23,42,.95);z-index:200;display:flex;justify-content:center;align-items:center;padding:12px}
 .authBox{background:#fff;width:100%;max-width:380px;border-radius:16px;padding:18px;color:#111}
-.footer{text-align:center;font-size:10px;padding:12px;opacity:.8}
+.liveClock{background:#0f172a;color:#00ff88;padding:8px 14px;border-radius:20px;font-size:11px;font-weight:900;display:inline-block;letter-spacing:.5px}
 </style>
 <script>
 function showPage(id){
   try{
     document.querySelectorAll('section').forEach(s=>{s.classList.remove('active');s.style.display='none';});
-    var el=document.getElementById(id);
-    if(!el){alert('Section '+id+' not found');return;}
+    var el=document.getElementById(id); if(!el){alert('Section '+id+' not found');return;}
     el.classList.add('active');el.style.display='block';
     document.querySelectorAll('nav.m').forEach(b=>b.classList.remove('on'));
     var btn=document.getElementById('btn-'+id); if(btn) btn.classList.add('on');
     window.scrollTo(0,0);
     if(id==='dash'){setTimeout(()=>{try{drawChart()}catch(e){}},300);}
-  }catch(e){alert('Nav error: '+e.message);}
+  }catch(e){alert('Nav error '+e.message);}
 }
 window.S=showPage; window.showPage=showPage;
+setInterval(()=>{
+  let now=new Date();
+  let dateStr=now.toLocaleDateString('en-NG',{weekday:'short',year:'numeric',month:'short',day:'numeric'});
+  let timeStr=now.toLocaleTimeString('en-NG',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  let el=document.getElementById('liveDateTime');
+  let el2=document.getElementById('liveDateTime2');
+  if(el) el.innerText=dateStr+' | '+timeStr;
+  if(el2) el2.innerText=dateStr+' | '+timeStr;
+  let d=document.getElementById('fDate'); if(d &&!d.value) d.valueAsDate=new Date();
+  let d2=document.getElementById('attDate'); if(d2 &&!d2.value) d2.valueAsDate=new Date();
+  let d3=document.getElementById('rDate'); if(d3 &&!d3.value) d3.valueAsDate=new Date();
+  let d4=document.getElementById('idDate'); if(d4 &&!d4.value) d4.valueAsDate=new Date();
+  let d5=document.getElementById('noticeDate'); if(d5 &&!d5.value) d5.valueAsDate=new Date();
+},1000);
+function getNowDateTime(){
+  let now=new Date();
+  return {
+    date: now.toISOString().slice(0,10),
+    time: now.toTimeString().slice(0,5),
+    fullDate: now.toLocaleDateString('en-NG'),
+    fullTime: now.toLocaleTimeString('en-NG'),
+    fullDateTime: now.toLocaleString('en-NG'),
+    iso: now.toISOString()
+  };
+}
 </script>
 </head><body>
+
 <div id="authOverlay"><div class="authBox">
 <h2 id="authTitle">🎓 School Login</h2>
-<p style="font-size:11px;text-align:center;opacity:.7">Enter email + PIN given by admin</p>
+<p style="font-size:11px;text-align:center;opacity:.7">Enter email + PIN from admin</p>
 <input id="authEmail" placeholder="School Email e.g. sebil@gmail.com">
 <input id="authPass" type="password" placeholder="PIN e.g. EV-1234">
-<input id="authName" placeholder="School Full Name - For Register only" style="display:none">
+<input id="authName" placeholder="School Full Name - Register only" style="display:none">
 <p id="authMsg" style="font-size:11px;color:#ef4444;text-align:center"></p>
 <button class="btn btn-p" onclick="doLogin()" id="loginBtn">Login</button>
-<button class="btn" style="background:#f1f5f9" onclick="toggleAuthMode()" id="toggleBtn">New School? Register Here</button>
-<button class="btn btn-d" style="display:none" onclick="doRegister()" id="regBtn">Create Account - Get 3 Days Free</button>
-<div style="text-align:center;font-size:10px;margin-top:10px">OPay: <b>9027398199</b> Aminat | +2348050394277<br>www.eduverse.com.ng</div>
+<button class="btn" style="background:#f1f5f9" onclick="toggleAuthMode()" id="toggleBtn">New School? Register</button>
+<button class="btn btn-d" style="display:none" onclick="doRegister()" id="regBtn">Create Account - 3 Days Free Trial</button>
+<div style="text-align:center;font-size:10px;margin-top:10px">OPay: <b>9027398199</b> Aminat | +2348050394277<br>www.eduverse.com.ng | <span onclick="showPage('terms')" style="color:#4f46e5;text-decoration:underline">Terms</span> | <span onclick="showPage('privacy')" style="color:#4f46e5;text-decoration:underline">Privacy</span></div>
 </div></div>
+
 <nav><div class="logo">🎓 EduVerse</div><div style="display:flex;gap:3px">
 <button class="m on" id="btn-dash" onclick="showPage('dash')">Home</button>
 <button class="m" id="btn-att" onclick="showPage('att')">Att</button>
@@ -64,105 +87,280 @@ window.S=showPage; window.showPage=showPage;
 <button class="m" id="btn-market" onclick="showPage('market')" style="background:#16a34a;color:#fff;border-color:#16a34a">🚀 Market 10</button>
 <button class="m" id="btn-terms" onclick="showPage('terms')">Terms</button>
 <button class="m" id="btn-privacy" onclick="showPage('privacy')">Privacy</button>
-<button class="m" style="background:#fee2e2;color:#991b1b;border-color:#fee2e2" onclick="doLogout()">Logout</button>
+<button class="m" style="background:#fee2e2;color:#991b1b" onclick="doLogout()">Logout</button>
 </div></nav>
+
 <section id="dash" class="active" style="display:block">
 <div class="card" id="dc" style="background:linear-gradient(135deg,var(--p),#7c3aed);color:#fff"><h3>Loading school info...</h3></div>
+<div class="card" style="text-align:center"><span class="liveClock" id="liveDateTime">Loading date & time...</span><br><small style="font-size:10px">Lagos Time (WAT) - Auto updates every second</small></div>
 <div class="row"><div class="card" style="flex:1;text-align:center"><b id="tInc">₦0</b><br><small>Income</small></div><div class="card" style="flex:1;text-align:center"><b id="tDebt">₦0</b><br><small>Debt</small></div><div class="card" style="flex:1;text-align:center"><b id="tRes">0</b><br><small>Results</small></div><div class="card" style="flex:1;text-align:center"><b id="tAtt">0</b><br><small>Attendance</small></div></div>
-<div class="card"><h4>📈 Performance Chart</h4><canvas id="perfChart" height="120"></canvas></div>
-<div class="card"><h3>🏫 Campus / Branch</h3><div class="row"><select id="campusSel" onchange="switchCampus()"><option>Main Campus</option></select><input id="newCampus" placeholder="Add new campus e.g. Annex"><button class="m on" onclick="addCampus()">Add</button></div></div>
-<div class="footer">© 2026 EduVerse | OPay 9027398199 | www.eduverse.com.ng</div>
+<div class="card"><h4>📈 Performance Chart - Last 6 Results</h4><canvas id="perfChart" height="120"></canvas></div>
+<div class="card"><h3>🏫 Campus / Branch Manager</h3><div class="row"><select id="campusSel" onchange="switchCampus()"><option>Main Campus</option></select><input id="newCampus" placeholder="Add new campus e.g. Annex, Islamiyyah"><button class="m on" onclick="addCampus()">Add Campus</button></div><p style="font-size:10px;opacity:.7">Each campus has separate students, fees, results, attendance. Switch campus to view separate data.</p></div>
+<div class="row"><div class="card" style="flex:1"><h4>Quick Actions</h4><button class="btn btn-p" onclick="showPage('att')">📅 Mark Attendance</button><button class="btn btn-p" style="background:#16a34a" onclick="showPage('fees')">💰 Add Fees</button><button class="btn btn-p" style="background:#eab308;color:#111" onclick="showPage('res')">📊 Create Result</button><button class="btn btn-p" style="background:#111" onclick="showPage('idc')">🪪 Generate ID Card</button></div><div class="card" style="flex:1"><h4>Support & Payment</h4><p style="font-size:11px;line-height:16px">OPay: <b>9027398199</b><br>Aminat Adeshewa Olohunwa<br>WhatsApp: +2348050394277<br>Web: www.eduverse.com.ng<br>Email: info@eduverse.com.ng<br>Session: <span id="liveDateTime2"></span></p><button class="btn btn-g" onclick="window.open('https://wa.me/2348050394277?text=Hello+EduVerse+Support+I+need+help','_blank')">💬 Chat Support on WhatsApp</button></div></div>
+<div class="card" style="text-align:center;font-size:10px">© 2026 EduVerse Technologies | CAC Registered | OPay 9027398199 | +2348050394277 | www.eduverse.com.ng | <span onclick="showPage('terms')" style="color:var(--p);text-decoration:underline;cursor:pointer">Terms</span> | <span onclick="showPage('privacy')" style="color:var(--p);text-decoration:underline;cursor:pointer">Privacy</span> | <span onclick="showPage('market')" style="color:#16a34a;text-decoration:underline;cursor:pointer">🚀 Marketing Kit</span> | <span onclick="showPage('data')" style="color:var(--p);text-decoration:underline;cursor:pointer">Backup</span></div>
 </section>
+
 <section id="market">
-<div class="card" style="background:linear-gradient(135deg,#16a34a,#15803d);color:#fff"><h2>🚀 MEGA STEP 9 - GET FIRST 10 SCHOOLS @ ₦20k</h2></div>
-<div class="card"><h3>76 - Demo Video Script</h3><textarea readonly style="height:90px;font-size:11px">Hello Sir/Madam, I'm Abdulsalam from EduVerse. In 60 seconds I show how you manage school from phone. 1. Mark attendance. 2. Add fees - see who owes. 3. Create result - PDF with QR. 4. Print ID card. All offline + backup. 3 days free trial. Only ₦15k per term. OPay 9027398199. WhatsApp +2348050394277. www.eduverse.com.ng</textarea></div>
-<div class="card"><h3>78 - Flyer Text</h3><textarea readonly style="height:120px;font-size:11px">🎓 EDUVERSE - SCHOOL MANAGEMENT MADE EASY
-For Private Schools & Islamiyyah
-✅ Attendance (Student & Staff)
-✅ Fees - Know who paid & who owes
-✅ Result - PDF with school logo & QR
-✅ ID Card - Instant print
-✅ Timetable, Notice via WhatsApp
-✅ Works offline, Backup to Google
+<div class="card" style="background:linear-gradient(135deg,#16a34a,#15803d);color:#fff"><h2>🚀 MEGA STEP 9 - GET FIRST 10 SCHOOLS @ ₦20k</h2><p style="font-size:11px">Marketing kit - Do daily with phone/legs - Date: <span id="marketDate"></span></p></div>
+<div class="card"><h3>76 - 1-Min Demo Video Script (Record with phone screen recorder)</h3><textarea readonly style="height:110px;font-size:11px">Hello Sir/Madam, I'm Abdulsalam from EduVerse. In 60 seconds I will show how you can manage your whole school from phone. 1. Mark attendance - student & staff with date & time. 2. Add fees - see who owes instantly. 3. Create result - PDF with school logo & QR code + date/time stamp. 4. Print ID card with date. All works offline + backup to Google. 3 days free trial. Only ₦15k per term. OPay 9027398199. WhatsApp +2348050394277. www.eduverse.com.ng</textarea><button class="btn btn-p" onclick="navigator.clipboard.writeText(this.previousElementSibling.value);alert('Copied!')">Copy Script</button></div>
+<div class="card"><h3>78 - Flyer Text (Give to Designer on Canva / Send to Printer)</h3><textarea readonly style="height:140px;font-size:11px">🎓 EDUVERSE - SCHOOL MANAGEMENT MADE EASY
+For Private Schools & Islamiyyah & Polytechnics
+✅ Attendance (Student & Staff) with Date & Time
+✅ Fees - Know who paid & who owes + CSV Export
+✅ Result - PDF with school logo & QR + Date/Time
+✅ ID Card - Front & Back Instant print with Date
+✅ Timetable, Notice to Parents via WhatsApp with Date stamp
+✅ Works offline, Backup to Google with Date_Time filename
+✅ Live Clock & Performance Chart
 FREE 3 DAYS TRIAL
 Price: ₦15k / Term | ₦50k / Year
-Pay: OPay 9027398199 Aminat
+Pay: OPay 9027398199 Aminat Adeshewa
 Contact: +2348050394277
-www.eduverse.com.ng</textarea></div>
-<div class="card"><h3>81 - Sales Script ₦2k Extra</h3><textarea readonly style="height:100px;font-size:11px">Sir, you don't need to pay from pocket. Collect ₦2,000 extra as Result & ID Card Fee from each student per term. If you have 100 students = ₦200k. You pay me only ₦15k-₦20k per term, remaining ₦185k is your profit. Can I activate 3 days free trial now?</textarea></div>
-<div class="card"><h3>Daily Checklist</h3><p style="font-size:11px;line-height:18px">
-✅ Google Maps: private schools in Ikorodu, Islamiyyah Ikorodu, schools Igbogbo, Ijede, Imota, Agric<br>
-✅ Visit 5 schools/day 8-11am<br>
-✅ Facebook Page: EduVerse Nigeria<br>
-✅ ₦1k Ad targeting school owners Lagos<br>
-✅ Join 10 WhatsApp groups<br>
-✅ Get testimonial after first pay
+www.eduverse.com.ng
+Play Store: Search EduVerse - School Manager</textarea></div>
+<div class="card"><h3>81 - Sales Script - "Charge Parents ₦2k Extra" (Use when visiting schools physically)</h3><textarea readonly style="height:120px;font-size:11px">Sir, you don't need to pay from your pocket. This is what our 10 schools do: You collect ₦2,000 extra as "Result & ID Card Fee" from each student per term. If you have 100 students = ₦200k. You pay me only ₦15k-₦20k per term, remaining ₦185k is your profit. Plus you look more professional to parents with printed results and ID cards with QR and date/time. Can I activate your 3 days free trial now with your school name and logo?</textarea></div>
+<div class="card"><h3>77 + 87 - WhatsApp Status & Group Daily Posts (7 Days Content)</h3><p style="font-size:11px;line-height:18px">
+<b>Day 1:</b> 🎓 Tired of writing results by hand? EduVerse does it in 2 mins - PDF with QR + Date/Time. Free trial +2348050394277<br>
+<b>Day 2:</b> School owners - Stop losing fee money. Our software shows who owes you in 1 click with date/time stamp. Demo video attached.<br>
+<b>Day 3:</b> ID Card in 30 seconds - Front & Back with date - Just add name, class, photo. Print.<br>
+<b>Day 4:</b> Testimonial: "EduVerse helped my school مركز نور السلام" - Alhamdulillah, result now professional with date/time.<br>
+<b>Day 5:</b> How 100 students school makes ₦185k profit using EduVerse - Ask me how.<br>
+<b>Day 6:</b> Free 3 days trial - I will setup your school name + logo today. With live clock.<br>
+<b>Day 7:</b> Last 3 slots for ₦20k (instead of ₦30k) this month. OPay 9027398199 - Date: Today
 </p></div>
-<button class="btn btn-p" onclick="showPage('dash')">← Back Home</button>
+<div class="card"><h3>83,84 - Pricing & Referral Program</h3><p style="font-size:12px;line-height:18px">
+<b>Your Offer to Schools:</b><br>
+- Termly (90 days): ₦15k<br>
+- Yearly (365 days): ₦50k (Best Value)<br>
+- First 10 schools: You charge ₦20k to close fast = ₦200k in your OPay<br><br>
+<b>Referral Script (84):</b><br>
+"Sir, if you introduce me to 2 other school owners and they pay, I will give you 1 month FREE extension. Your link is www.eduverse.com.ng - Tell them to mention your school name and date of referral"
+</p></div>
+<div class="card"><h3>79,80,85,86,88 - Daily Legwork Checklist with Date</h3><p style="font-size:11px;line-height:20px">
+☑ <b>Step 79:</b> List 50 schools on Google Maps - Search: "private schools in Ikorodu", "Islamiyyah Ikorodu", "schools in Igbogbo", "schools in Ijede", "schools in Imota", "nursery school Agric Ikorodu", "private universities Lagos", "polytechnic Ikorodu"<br>
+☑ <b>Step 80:</b> Visit 5 schools/day physically with flyer. Best time 8-11am to meet proprietor. Record date & time of visit.<br>
+☑ <b>Step 85:</b> Create Facebook Page: "EduVerse Nigeria" - Post flyer + demo video daily with date<br>
+☑ <b>Step 86:</b> Run ₦1k Facebook Ad - Target: Location Lagos, Interest: School Proprietor, Private School Owner - Link to WhatsApp<br>
+☑ <b>Step 87:</b> Join 10 WhatsApp Groups - Search Facebook "Private Schools Lagos WhatsApp Group" - Don't spam, give value first<br>
+☑ <b>Step 88:</b> Get Testimonial - After first school pays, ask for 20 sec voice note + school logo + date - Post as proof on status
+</p><button class="btn btn-g" onclick="showPage('dash')">✅ I Understand - Back to Home</button></div>
 </section>
-<section id="terms"><div class="card"><h1>Terms</h1><p style="font-size:12px">EduVerse by Abdulsalam +2348050394277 License 30/90/365 days Auto-lock Payment OPay 9027398199 Domain www.eduverse.com.ng No refund after activation.</p></div><button class="btn btn-p" onclick="showPage('dash')">Back Home</button></section>
-<section id="privacy"><div class="card"><h1>Privacy</h1><p style="font-size:12px">Data stored local + Firebase eduverse-a1d66 No selling Permissions Camera Storage Delete +2348050394277 in 7 days.</p></div><button class="btn btn-p" onclick="showPage('dash')">Back Home</button></section>
-<section id="att"><div class="card"><h3>📅 Attendance</h3><div class="row"><select id="cls"><option>JSS1</option><option>JSS2</option><option>Primary 1</option><option>Islamiyyah</option></select><select id="type"><option>Student</option><option>Staff</option></select></div><div class="row"><input id="attName" placeholder="Full Name"><input id="attPhone" placeholder="Parent Phone"></div><div class="row"><button class="btn btn-p" style="background:#16a34a" onclick="markA('Present')">✅ Present</button><button class="btn btn-p" style="background:#dc2626" onclick="markA('Absent')">❌ Absent</button></div></div><div class="card"><div style="overflow:auto;max-height:300px"><table><thead><tr><th>Name</th><th>Class</th><th>Type</th><th>Status</th><th>Date</th></tr></thead><tbody id="attBody"></tbody></table></div></div><button class="btn" onclick="showPage('dash')">← Home</button></section>
-<section id="fees"><div class="card"><h3>💰 Fees</h3><div class="row"><input id="fName" placeholder="Student Name"><input id="fClass" placeholder="Class"></div><div class="row"><input id="fTotal" type="number" placeholder="Total Fee"><input id="fPaid" type="number" placeholder="Paid"></div><button class="btn btn-p" onclick="addFees()">Save Fee</button></div><div class="card"><div style="overflow:auto;max-height:300px"><table><thead><tr><th>Name</th><th>Class</th><th>Total</th><th>Paid</th><th>Balance</th></tr></thead><tbody id="feesBody"></tbody></table></div></div><button class="btn" onclick="showPage('dash')">← Home</button></section>
-<section id="res"><div class="card"><h3>📊 Result - PDF with QR</h3><div class="row"><input id="rName" placeholder="Student Name"><input id="rClass" placeholder="Class"></div><div id="subGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px"></div><div class="card" style="background:#f6f7ff"><div class="row"><div style="flex:1">Total: <b><span id="rTotal">0</span></b></div><div style="flex:1">Avg: <b><span id="rAvg">0</span>%</b></div><div style="flex:1">Grade: <b><span id="rGrade">-</span></b></div></div><div class="row"><button class="m" onclick="calcRes()">Calculate</button><button class="m on" onclick="saveResult()">Save</button><button class="m" style="background:#111;color:#fff" onclick="generatePDF()">📄 PDF + QR</button></div></div></div><div class="card"><div style="overflow:auto;max-height:300px"><table><thead><tr><th>Code</th><th>Name</th><th>Class</th><th>Avg</th><th>Grade</th><th>Action</th></tr></thead><tbody id="resBody"></tbody></table></div></div><button class="btn" onclick="showPage('dash')">← Home</button></section>
-<section id="idc"><div class="card"><h3>🪪 ID Card</h3><div class="row"><input id="idName" placeholder="Student Name" oninput="genID()"><input id="idClass" placeholder="Class"></div><div class="row"><input type="file" accept="image/*" onchange="loadImg(this)"><input type="hidden" id="idPhotoData"></div><button class="btn btn-p" onclick="genID()">Generate ID</button><button class="btn btn-d" onclick="downloadID()">Download ID</button></div><div class="card"><div id="idCardDiv" style="width:340px;height:210px;border-radius:14px;padding:12px;display:flex;flex-direction:column;justify-content:space-between;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;margin:auto"><div style="display:flex;justify-content:space-between"><b>EDUVERSE ACADEMY</b><small id="idCardYear">2025/2026</small></div><div style="display:flex;gap:14px;align-items:center"><img id="idFrontPhoto" style="width:80px;height:80px;border-radius:12px;background:#fff;object-fit:cover"><div><div id="idFrontName" style="font-weight:900">Student Full Name</div><div id="idFrontClass">Class: JSS1</div><div id="idFrontCode">ID: EV-1234</div></div></div><div style="font-size:8px;text-align:center">www.eduverse.com.ng | +2348050394277</div></div></div><button class="btn" onclick="showPage('dash')">← Home</button></section>
-<section id="tools"><div class="card"><h3>📢 Notice to Parents</h3><textarea id="noticeText" rows="4" placeholder="Dear Parents..."></textarea><button class="btn btn-g" onclick="sendNoticeWA()">Send via WhatsApp</button></div><button class="btn" onclick="showPage('dash')">← Home</button></section>
-<section id="data"><div class="card"><h3>💾 Data Management</h3><div class="row"><button class="btn btn-p" onclick="backupData()">📥 Backup JSON</button><button class="btn btn-d" onclick="document.getElementById('restoreFile').click()">📤 Restore</button><input type="file" id="restoreFile" style="display:none" accept=".json" onchange="restoreData(this)"></div><div class="row"><button class="btn" style="background:#fee2e2;color:#991b1b" onclick="if(confirm('Clear ALL data?')){localStorage.clear();location.reload()}">Clear All</button><button class="btn" style="background:#f1f5f9" onclick="toggleDark()">Dark/Light</button></div></div><button class="btn" onclick="showPage('dash')">← Home</button></section>
+
+<section id="terms"><div class="card"><h1>Terms of Service - www.eduverse.com.ng</h1><p style="font-size:11px;opacity:.6">Last updated: September 2026 | EduVerse Technologies | DateTime tracking enabled</p><br><p style="font-size:12px;line-height:20px">
+<b>1. Ownership:</b> EduVerse owned by Abdulsalam Daud, Lagos, Nigeria. Contact +2348050394277<br>
+<b>2. License:</b> 30/90/365 days. Auto-lock after expiry. License includes date & time tracking feature.<br>
+<b>3. Trial:</b> 3 days free trial<br>
+<b>4. Payment:</b> OPay 9027398199 Aminat Adeshewa Olohunwa<br>
+<b>5. CAC:</b> EduVerse Technologies<br>
+<b>6. Domain:</b> www.eduverse.com.ng<br>
+<b>7. No refund after activation</b><br>
+<b>8. Date & Time:</b> All records include date & time stamp for audit.
+</p></div><button class="btn btn-p" onclick="showPage('dash')">Back Home</button></section>
+
+<section id="privacy"><div class="card"><h1>Privacy Policy - Play Store</h1><p style="font-size:11px;opacity:.6">Last updated: September 2026 | DateTime included</p><br><p style="font-size:12px;line-height:20px">
+<b>1. Data:</b> School name, email, student names, fees, results, attendance with date & time, ID photos<br>
+<b>2. Storage:</b> LocalStorage + Firebase eduverse-a1d66 (Google)<br>
+<b>3. No selling:</b> Never sell data<br>
+<b>4. Permissions:</b> Camera (ID), Storage (PDF), Internet (sync)<br>
+<b>5. Deletion:</b> Contact +2348050394277 - deleted in 7 days<br>
+<b>6. Date & Time:</b> We store date & time of each record for audit and backup filename.
+</p></div><button class="btn btn-p" onclick="showPage('dash')">Back Home</button></section>
+
+<section id="att"><div class="card"><h3>📅 Attendance - Student & Staff with Date & Time (COMPLETE)</h3><div class="row"><select id="cls"><option>JSS1</option><option>JSS2</option><option>JSS3</option><option>SS1</option><option>SS2</option><option>Primary 1</option><option>Primary 2</option><option>Primary 3</option><option>Primary 4</option><option>Primary 5</option><option>Nursery 1</option><option>Nursery 2</option><option>Islamiyyah</option><option>University</option></select><select id="type"><option>Student</option><option>Staff</option><option>Teacher</option></select></div><div class="row"><input id="attName" placeholder="Full Name"><input id="attPhone" placeholder="Parent Phone (optional)"></div><div class="row"><input id="attDate" type="date"><input id="attTime" type="time"><input id="attSession" placeholder="Session e.g. 2025/2026"></div><div class="row"><button class="btn btn-p" style="background:#16a34a" onclick="markA('Present')">✅ Present + DateTime</button><button class="btn btn-p" style="background:#dc2626" onclick="markA('Absent')">❌ Absent + DateTime</button></div><p style="font-size:10px;opacity:.6">Date & Time auto-filled from live clock, editable. Timestamp saved for audit.</p></div><div class="card"><h4>Attendance Records - <span id="attCount">0</span> | <span id="liveDateTimeAtt"></span></h4><div style="overflow:auto;max-height:350px"><table><thead><tr><th>Name</th><th>Class</th><th>Type</th><th>Status</th><th>Date</th><th>Time</th><th>Session</th><th>Phone</th><th>Timestamp</th></tr></thead><tbody id="attBody"></tbody></table></div><div class="row"><button class="btn btn-p" style="background:#eab308;color:#111" onclick="exportCSV('attendance')">📊 Export Attendance CSV with DateTime</button><button class="btn btn-d" onclick="clearAtt()">🗑️ Clear Attendance</button></div></div><button class="btn" onclick="showPage('dash')">← Back Home</button></section>
+
+<section id="fees"><div class="card"><h3>💰 Fees Management - With Date & Time (COMPLETE)</h3><div class="row"><input id="fName" placeholder="Student Full Name"><input id="fClass" placeholder="Class e.g. JSS1 A"></div><div class="row"><input id="fTotal" type="number" placeholder="Total Fee e.g. 30000"><input id="fPaid" type="number" placeholder="Amount Paid e.g. 20000"></div><div class="row"><select id="fTerm"><option>1st Term</option><option>2nd Term</option><option>3rd Term</option><option>Session Fee</option><option>University Semester</option></select><input id="fDate" type="date"><input id="fTime" type="time"></div><div class="row"><input id="fMethod" placeholder="Payment Method e.g. Cash/Transfer/OPay"><input id="fReceipt" placeholder="Receipt No e.g. EV-R-001"></div><button class="btn btn-p" onclick="addFees()">💾 Save Fee Record with Date & Time</button></div><div class="card"><h4>Fees List - Income: <span id="feesIncome">₦0</span> | Debt: <span id="feesDebt">₦0</span> | Date: <span id="feesDateNow"></span></h4><div style="overflow:auto;max-height:400px"><table><thead><tr><th>Name</th><th>Class</th><th>Term</th><th>Total</th><th>Paid</th><th>Balance</th><th>Method</th><th>Receipt</th><th>Date</th><th>Time</th><th>Timestamp</th></tr></thead><tbody id="feesBody"></tbody></table></div><div class="row"><button class="btn btn-g" onclick="exportFeesWA()">📲 Share Debtors via WhatsApp with Date</button><button class="btn btn-p" style="background:#eab308;color:#111" onclick="exportCSV('fees')">📊 Export Fees CSV with DateTime</button><button class="btn btn-d" onclick="clearFees()">🗑️ Clear Fees</button></div></div><button class="btn" onclick="showPage('dash')">← Back Home</button></section>
+
+<section id="res"><div class="card"><h3>📊 Result System - PDF with QR + Date & Time (COMPLETE)</h3><div class="row"><input id="rName" placeholder="Student Full Name"><input id="rClass" placeholder="Class e.g. JSS1 A"></div><div class="row"><select id="rTerm"><option>1st Term</option><option>2nd Term</option><option>3rd Term</option><option>University Semester</option></select><input id="rSession" placeholder="Session e.g. 2025/2026"><input id="rPosition" placeholder="Position e.g. 5th"></div><div class="row"><input id="rDate" type="date"><input id="rTime" type="time"><input id="rTeacher" placeholder="Class Teacher Name"></div><div id="subGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px"></div><div class="card" style="background:#f6f7ff"><div class="row"><div style="flex:1">Total: <b><span id="rTotal">0</span></b></div><div style="flex:1">Avg: <b><span id="rAvg">0</span>%</b></div><div style="flex:1">Grade: <b><span id="rGrade">-</span></b></div><div style="flex:1">Date: <b><span id="rDateDisplay">-</span></b></div></div><div class="row"><button class="m" onclick="calcRes()">Calculate</button><button class="m on" onclick="saveResult()">💾 Save + DateTime</button><button class="m" style="background:#111;color:#fff" onclick="generatePDF()">📄 Generate PDF + QR + DateTime</button></div></div></div><div class="card"><h4>Saved Results - <span id="resCount">0</span></h4><div style="overflow:auto;max-height:350px"><table><thead><tr><th>Code</th><th>Name</th><th>Class</th><th>Avg</th><th>Grade</th><th>Term</th><th>Session</th><th>Position</th><th>Date</th><th>Time</th><th>Action</th></tr></thead><tbody id="resBody"></tbody></table></div><div class="row"><button class="btn btn-p" style="background:#eab308;color:#111" onclick="exportCSV('results')">📊 Export Results CSV</button><button class="btn btn-d" onclick="clearResults()">🗑️ Clear Results</button></div></div><div id="qrTemp" style="display:none"></div><button class="btn" onclick="showPage('dash')">← Back Home</button></section>
+
+<section id="idc"><div class="card"><h3>🪪 ID Card Generator - Front & Back + Date & Time (COMPLETE)</h3><div class="row"><input id="idName" placeholder="Student Full Name" oninput="genID()"><input id="idClass" placeholder="Class e.g. JSS1 A"><input id="idID" placeholder="ID No e.g. EV-1234"></div><div class="row"><input type="file" accept="image/*" onchange="loadImg(this)"><input type="hidden" id="idPhotoData"><select id="idBlood"><option value="">Blood Group</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>O+</option><option>O-</option><option>AB+</option><option>AB-</option></select></div><div class="row"><input id="idDate" type="date"><input id="idTime" type="time"><input id="idExpiry" placeholder="Expiry e.g. 2026/2027"></div><div class="row"><button class="btn btn-p" onclick="genID()">👁️ Preview ID with Date</button><button class="btn btn-d" onclick="downloadID()">📥 Download Front PNG with Date</button><button class="btn btn-g" onclick="downloadIDBack()">📥 Download Back PNG</button></div></div><div class="card"><h4>Front Preview - With Date & Time</h4><div id="idCardDiv" style="width:340px;height:210px;border-radius:14px;padding:12px;display:flex;flex-direction:column;justify-content:space-between;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;margin:auto;box-shadow:0 8px 20px rgba(79,70,229,.3)"><div style="display:flex;justify-content:space-between;align-items:center"><b style="font-size:14px">EDUVERSE ACADEMY</b><small id="idCardYear" style="background:#fff;color:#4f46e5;padding:3px 10px;border-radius:20px;font-weight:800">2025/2026</small></div><div style="display:flex;gap:14px;align-items:center"><img id="idFrontPhoto" style="width:80px;height:80px;border-radius:12px;background:#fff;object-fit:cover;border:3px solid #fff"><div><div id="idFrontName" style="font-weight:900;font-size:14px">Student Full Name</div><div id="idFrontClass" style="font-size:12px">Class: JSS1</div><div style="font-size:10px;margin-top:2px" id="idFrontCode">ID: EV-1234</div><div style="font-size:9px" id="idFrontBlood">Blood: O+</div><div style="font-size:8px" id="idFrontDate">Date: 2026-09-21 | Time: 12:00</div></div></div><div style="font-size:8px;text-align:center;letter-spacing:.5px">www.eduverse.com.ng | +2348050394277 | OPay 9027398199 | Valid with Date</div></div></div><div class="card"><h4>Back Preview - With Date & QR</h4><div id="idCardBackDiv" style="width:340px;height:210px;border-radius:14px;padding:12px;background:#fff;color:#111;border:2px solid #4f46e5;margin:auto"><div style="font-size:10px;line-height:14px"><b>SCHOOL RULES & INFO:</b><br>1. This card must be worn at all times<br>2. Lost card replacement ₦1000<br>3. Valid for current session only - Check date<br>4. Property of school - Return on exit<br>5. Issued: <span id="idBackDate">2026-09-21</span> | <span id="idBackTime">12:00</span><br><br><div style="text-align:center;margin-top:6px"><div id="idBackQR" style="width:70px;height:70px;background:#f1f5f9;margin:auto;display:flex;align-items:center;justify-content:center;font-size:8px;border:1px solid #ddd">QR CODE<br>Date & Time</div><div style="font-size:8px;margin-top:4px">Scan to verify with date/time</div></div><div style="font-size:7px;text-align:center;margin-top:6px">Powered by EduVerse - www.eduverse.com.ng - Date: <span id="idBackFullDate"></span></div></div></div></div><button class="btn" onclick="showPage('dash')">← Back Home</button></section>
+
+<section id="tools"><div class="card"><h3>📢 Notice to Parents - WhatsApp Broadcast with Date & Time (COMPLETE)</h3><textarea id="noticeText" rows="5" placeholder="Dear Parents,&#10;This is to inform you that resumption for 3rd term is on...&#10;Date:...&#10;Thank you.&#10;Management"></textarea><div class="row"><input id="noticeDate" type="date"><input id="noticeTime" type="time"><select id="noticeClass"><option>All Classes</option><option>JSS1</option><option>Primary</option><option>Nursery</option></select></div><div class="row"><button class="btn btn-g" onclick="sendNoticeWA()">📲 Send via WhatsApp with DateTime Stamp</button><button class="btn btn-p" onclick="sendNoticeSMS()">💬 Copy Text with DateTime</button></div></div><div class="card"><h3>🕒 Timetable Generator with Date</h3><div class="row"><select id="ttClass"><option>JSS1</option><option>JSS2</option><option>JSS3</option><option>Primary 1</option><option>Primary 2</option><option>Nursery</option><option>Islamiyyah</option></select><select id="ttDay"><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option></select><input id="ttDate" type="date"></div><textarea id="ttData" rows="3" placeholder="Period 1: Mathematics - Mr John (8:00-8:40)&#10;Period 2: English - Mrs Bola (8:40-9:20)&#10;Break (9:20-9:40)&#10;Period 3: Basic Science"></textarea><div class="row"><button class="btn btn-p" onclick="saveTT()">💾 Save Timetable with Date</button><button class="btn btn-d" onclick="viewTT()">👁️ View All Timetables</button></div><div id="ttView" style="font-size:11px;margin-top:8px;background:#f6f7ff;padding:8px;border-radius:8px"></div></div><div class="card"><h3>🔢 CGPA Calculator - For University/Polytechnic Module</h3><div class="row"><input id="cgpaUnits" type="number" placeholder="Total Units e.g. 20"><input id="cgpaPoints" type="number" placeholder="Total Grade Points e.g. 75"><input id="cgpaDate" type="date"></div><button class="btn btn-p" onclick="let u=parseFloat(document.getElementById('cgpaUnits').value)||1;let p=parseFloat(document.getElementById('cgpaPoints').value)||0;let cg=(p/u).toFixed(2);let cls=cg>=3.5?'First Class':cg>=3.0?'Second Class Upper':cg>=2.5?'Second Class Lower':cg>=2.0?'Third Class':'Pass';document.getElementById('cgpaResult').innerHTML='CGPA: '+cg+'<br>'+cls+'<br>Date: '+document.getElementById('cgpaDate').value;">Calculate CGPA with Date</button><div id="cgpaResult" style="text-align:center;font-weight:900;margin-top:8px;background:#f6f7ff;padding:10px;border-radius:8px">CGPA: -</div></div><div class="card"><h3>🏛️ University Features - Extra</h3><p style="font-size:11px">For University/Polytechnic: Use Result module with Semester, CGPA calculator above, ID Card with expiry date, Fees with semester. All include date & time.</p></div><button class="btn" onclick="showPage('dash')">← Back Home</button></section>
+
+<section id="data"><div class="card"><h3>💾 Data Management - Backup / Restore / Export with Date & Time (COMPLETE)</h3><div class="row"><button class="btn btn-p" onclick="backupData()">📥 Backup All Data with DateTime Filename</button><button class="btn btn-d" onclick="document.getElementById('restoreFile').click()">📤 Restore Backup JSON</button><input type="file" id="restoreFile" style="display:none" accept=".json" onchange="restoreData(this)"></div><div class="row"><button class="btn" style="background:#dcfce7;color:#166534" onclick="exportCSV('fees')">📊 Export Fees CSV with DateTime</button><button class="btn" style="background:#fef3c7;color:#92400e" onclick="exportCSV('attendance')">📊 Export Attendance CSV with DateTime</button><button class="btn" style="background:#e0e7ff;color:#3730a3" onclick="exportCSV('results')">📊 Export Results CSV with DateTime</button></div><div class="row"><button class="btn" style="background:#fee2e2;color:#991b1b" onclick="if(confirm('Clear ALL data for this campus? Cannot be undone! Date: '+getNowDateTime().fullDateTime)){localStorage.removeItem(getKey('edu_attendance'));localStorage.removeItem(getKey('edu_fees'));localStorage.removeItem(getKey('edu_results'));localStorage.removeItem(getKey('edu_tt'));location.reload()}">🗑️ Clear This Campus Data</button><button class="btn" style="background:#f1f5f9" onclick="toggleDark()">🌙 Toggle Dark/Light Mode</button></div><div style="font-size:10px;margin-top:10px;background:#f6f7ff;padding:8px;border-radius:8px">Backup includes: Attendance with date/time, Fees with date/time, Results with date/time, Timetable with date, Campus info, Export timestamp. Filename format: EduVerse_CampusName_2026-09-21_14-30-00.json<br>Last backup: <span id="lastBackup">Never</span></div></div><div class="card"><h3>📱 PWA - Install as App</h3><p style="font-size:11px">On Android Chrome: Menu (3 dots) → Add to Home Screen → Install EduVerse as app with date/time support.</p><p style="font-size:10px;opacity:.7">Current DateTime: <span id="dataDateTime"></span></p></div><button class="btn" onclick="showPage('dash')">← Back Home</button></section>
+
 <script>
 let campus=localStorage.getItem('edu_campus')||'Main Campus';
 function getKey(k){return campus+'_'+k;}
 let att=JSON.parse(localStorage.getItem(getKey('edu_attendance'))||'[]');
 let fees=JSON.parse(localStorage.getItem(getKey('edu_fees'))||'[]');
 let results=JSON.parse(localStorage.getItem(getKey('edu_results'))||'[]');
-let subjects=['Mathematics','English','Basic Science','Social Studies','Civic','Computer','Agric','PHE','CRS/IRS','Business'];
+let subjects=['Mathematics','English Language','Basic Science','Social Studies','Civic Education','Computer Studies','Agricultural Science','PHE','CRS/IRS','Business Studies','French','Yoruba'];
 let subGrid=document.getElementById('subGrid');
-subjects.forEach((s,i)=>{subGrid.innerHTML+=`<div style="border:1px solid #e5e7eb;padding:6px;border-radius:8px;font-size:9px"><small>${s}</small><div class="row"><input id="ca${i}" type="number" placeholder="CA" oninput="calcRes()"><input id="ex${i}" type="number" placeholder="Exam" oninput="calcRes()"><input id="tot${i}" readonly style="width:50px;background:#f6f7ff"></div></div>`;});
+subjects.forEach((s,i)=>{
+  subGrid.innerHTML+=`<div style="border:1px solid #e5e7eb;padding:6px;border-radius:8px;font-size:9px"><small style="font-weight:700">${s}</small><div class="row"><input id="ca${i}" type="number" min="0" max="30" placeholder="CA 30" oninput="calcRes()"><input id="ex${i}" type="number" min="0" max="70" placeholder="Exam 70" oninput="calcRes()"><input id="tot${i}" readonly style="width:55px;background:#f6f7ff;font-weight:700"></div></div>`;
+});
 function loadImg(inp){let f=inp.files[0];if(!f)return;let r=new FileReader();r.onload=e=>{document.getElementById('idPhotoData').value=e.target.result;document.getElementById('idFrontPhoto').src=e.target.result;};r.readAsDataURL(f);}
-function markA(st){let n=document.getElementById('attName').value.trim();if(!n)return;att.push({name:n,class:document.getElementById('cls').value,type:document.getElementById('type').value,status:st,date:new Date().toLocaleDateString()});localStorage.setItem(getKey('edu_attendance'),JSON.stringify(att));renderAtt();}
-function renderAtt(){document.getElementById('attBody').innerHTML=att.slice().reverse().slice(0,100).map(r=>`<tr><td>${r.name}</td><td>${r.class}</td><td>${r.type}</td><td>${r.status}</td><td>${r.date}</td></tr>`).join('');}
-function addFees(){let name=document.getElementById('fName').value.trim(),total=parseInt(document.getElementById('fTotal').value)||0,paid=parseInt(document.getElementById('fPaid').value)||0;if(!name)return;fees.push({name,class:document.getElementById('fClass').value,total,paid,balance:total-paid});localStorage.setItem(getKey('edu_fees'),JSON.stringify(fees));renderFees();}
-function renderFees(){let inc=0,debt=0;fees.forEach(r=>{inc+=r.paid;debt+=r.balance});document.getElementById('tInc').innerText='₦'+inc.toLocaleString();document.getElementById('tDebt').innerText='₦'+debt.toLocaleString();document.getElementById('tRes').innerText=results.length;document.getElementById('tAtt').innerText=att.length;document.getElementById('feesBody').innerHTML=fees.slice().reverse().map(r=>`<tr><td>${r.name}</td><td>${r.class}</td><td>₦${r.total}</td><td>₦${r.paid}</td><td>₦${r.balance}</td></tr>`).join('');}
-function calcRes(){let tot=0;subjects.forEach((s,i)=>{let ca=parseInt(document.getElementById('ca'+i).value)||0,ex=parseInt(document.getElementById('ex'+i).value)||0;let t=ca+ex;document.getElementById('tot'+i).value=t;tot+=t;});let avg=(tot/subjects.length).toFixed(1);document.getElementById('rTotal').innerText=tot;document.getElementById('rAvg').innerText=avg;let grade=avg>=70?'A':avg>=60?'B':avg>=50?'C':avg>=40?'D':'F';document.getElementById('rGrade').innerText=grade;return{total:tot,avg,grade};}
-function saveResult(){let name=document.getElementById('rName').value.trim();if(!name)return;let calc=calcRes();let code='EV-'+Math.floor(1000+Math.random()*9000);results.push({code,name,class:document.getElementById('rClass').value,avg:calc.avg,total:calc.total,grade:calc.grade});localStorage.setItem(getKey('edu_results'),JSON.stringify(results));renderResults();renderFees();}
-function renderResults(){document.getElementById('resBody').innerHTML=results.slice().reverse().map(r=>`<tr><td>${r.code}</td><td>${r.name}</td><td>${r.class}</td><td>${r.avg}%</td><td>${r.grade}</td><td><button class="m on" onclick="generatePDF('${r.code}')">PDF</button></td></tr>`).join('');}
-function genID(){document.getElementById('idFrontName').innerText=document.getElementById('idName').value||'Full Name';document.getElementById('idFrontClass').innerText=document.getElementById('idClass').value||'Class';}
-async function downloadID(){let el=document.getElementById('idCardDiv');try{let canvas=await html2canvas(el);let link=document.createElement('a');link.download='ID.png';link.href=canvas.toDataURL();link.click();}catch(e){alert(e.message);}}
-async function generatePDF(code){try{let r=code?results.find(x=>x.code===code):results[results.length-1];if(!r)return;const {jsPDF}=window.jspdf;let doc=new jsPDF();doc.text(`Name: ${r.name} Class: ${r.class} Code: ${r.code} Total: ${r.total} Avg: ${r.avg}% Grade: ${r.grade}`,20,20);doc.save(`${r.name}_Result.pdf`);}catch(e){alert(e.message);}}
-function sendNoticeWA(){window.open(`https://wa.me/?text=${encodeURIComponent(document.getElementById('noticeText').value)}`,'_blank');}
-function backupData(){let blob=new Blob([JSON.stringify({att,fees,results})],{type:'application/json'});let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Backup.json';a.click();}
-function restoreData(inp){let f=inp.files[0];if(!f)return;let reader=new FileReader();reader.onload=e=>{let d=JSON.parse(e.target.result);if(d.att)localStorage.setItem(getKey('edu_attendance'),JSON.stringify(d.att));if(d.fees)localStorage.setItem(getKey('edu_fees'),JSON.stringify(d.fees));if(d.results)localStorage.setItem(getKey('edu_results'),JSON.stringify(d.results));location.reload();};reader.readAsText(f);}
+function markA(st){
+  let n=document.getElementById('attName').value.trim(); if(!n){alert('Enter name');return;}
+  let dt=getNowDateTime();
+  let customDate=document.getElementById('attDate').value||dt.date;
+  let customTime=document.getElementById('attTime').value||dt.time;
+  let session=document.getElementById('attSession').value||'2025/2026';
+  att.push({name:n,class:document.getElementById('cls').value,type:document.getElementById('type').value,status:st,date:customDate,time:customTime,session,fullDate:dt.fullDate,fullTime:dt.fullTime,fullDateTime:dt.fullDateTime,phone:document.getElementById('attPhone').value,timestamp:dt.iso});
+  localStorage.setItem(getKey('edu_attendance'),JSON.stringify(att));renderAtt();document.getElementById('attName').value='';document.getElementById('attPhone').value='';
+}
+function renderAtt(){
+  let html=att.slice().reverse().slice(0,100).map(r=>`<tr><td>${r.name}</td><td>${r.class}</td><td>${r.type}</td><td style="color:${r.status==='Present'?'green':'red'};font-weight:700">${r.status}</td><td>${r.date}</td><td>${r.time}</td><td>${r.session||''}</td><td>${r.phone||''}</td><td style="font-size:8px">${r.fullDateTime||r.timestamp||''}</td></tr>`).join('');
+  document.getElementById('attBody').innerHTML=html;
+  document.getElementById('attCount').innerText=att.length;
+  document.getElementById('tAtt').innerText=att.length;
+  let live=document.getElementById('liveDateTimeAtt'); if(live) live.innerText=getNowDateTime().fullDateTime;
+}
+function clearAtt(){if(confirm('Clear attendance for '+campus+'? Date: '+getNowDateTime().fullDateTime)){att=[];localStorage.setItem(getKey('edu_attendance'),JSON.stringify(att));renderAtt();}}
+function addFees(){
+  let name=document.getElementById('fName').value.trim(),total=parseInt(document.getElementById('fTotal').value)||0,paid=parseInt(document.getElementById('fPaid').value)||0;
+  if(!name){alert('Enter student name');return;}
+  let dt=getNowDateTime();
+  let customDate=document.getElementById('fDate').value||dt.date;
+  let customTime=document.getElementById('fTime').value||dt.time;
+  fees.push({name,class:document.getElementById('fClass').value,total,paid,balance:total-paid,date:customDate,time:customTime,fullDate:dt.fullDate,fullTime:dt.fullTime,fullDateTime:dt.fullDateTime,timestamp:dt.iso,term:document.getElementById('fTerm').value,method:document.getElementById('fMethod').value,receipt:document.getElementById('fReceipt').value});
+  localStorage.setItem(getKey('edu_fees'),JSON.stringify(fees));renderFees();document.getElementById('fName').value='';document.getElementById('fPaid').value='';document.getElementById('fReceipt').value='';
+}
+function renderFees(){
+  let inc=0,debt=0; fees.forEach(r=>{inc+=r.paid;debt+=r.balance});
+  document.getElementById('tInc').innerText='₦'+inc.toLocaleString();
+  document.getElementById('tDebt').innerText='₦'+debt.toLocaleString();
+  document.getElementById('tRes').innerText=results.length;
+  let feesIncome=document.getElementById('feesIncome'); if(feesIncome) feesIncome.innerText='₦'+inc.toLocaleString();
+  let feesDebt=document.getElementById('feesDebt'); if(feesDebt) feesDebt.innerText='₦'+debt.toLocaleString();
+  let feesDateNow=document.getElementById('feesDateNow'); if(feesDateNow) feesDateNow.innerText=getNowDateTime().fullDateTime;
+  document.getElementById('feesBody').innerHTML=fees.slice().reverse().map(r=>`<tr><td>${r.name}</td><td>${r.class}</td><td>${r.term}</td><td>₦${r.total.toLocaleString()}</td><td>₦${r.paid.toLocaleString()}</td><td style="color:${r.balance>0?'red':'green'};font-weight:700">₦${r.balance.toLocaleString()}</td><td>${r.method||''}</td><td>${r.receipt||''}</td><td>${r.date}</td><td>${r.time}</td><td style="font-size:8px">${r.fullDateTime||''}</td></tr>`).join('');
+}
+function clearFees(){if(confirm('Clear fees for '+campus+'?')){fees=[];localStorage.setItem(getKey('edu_fees'),JSON.stringify(fees));renderFees();}}
+function exportFeesWA(){let debtors=fees.filter(f=>f.balance>0); if(!debtors.length){alert('No debtors');return;} let dt=getNowDateTime(); let txt=`DEBTORS LIST - ${campus}\nDate: ${dt.fullDateTime}\n\n`+debtors.map(d=>`${d.name} (${d.class}) - Bal ₦${d.balance} - Date: ${d.date}`).join('\n')+`\n\nGenerated by EduVerse ${dt.fullDateTime}`; window.open('https://wa.me/?text='+encodeURIComponent(txt),'_blank');}
+function calcRes(){
+  let tot=0; subjects.forEach((s,i)=>{let ca=parseInt(document.getElementById('ca'+i).value)||0,ex=parseInt(document.getElementById('ex'+i).value)||0;let t=ca+ex;document.getElementById('tot'+i).value=t;tot+=t;});
+  let avg=(tot/subjects.length).toFixed(1); document.getElementById('rTotal').innerText=tot; document.getElementById('rAvg').innerText=avg; document.getElementById('rDateDisplay').innerText=document.getElementById('rDate').value||getNowDateTime().date;
+  let grade=avg>=70?'A':avg>=60?'B':avg>=50?'C':avg>=40?'D':'F'; document.getElementById('rGrade').innerText=grade; return{total:tot,avg,grade};
+}
+function saveResult(){
+  let name=document.getElementById('rName').value.trim();if(!name){alert('Enter student name');return;}
+  let calc=calcRes();let code='EV-'+Math.floor(1000+Math.random()*9000);
+  let dt=getNowDateTime();
+  let customDate=document.getElementById('rDate').value||dt.date;
+  let customTime=document.getElementById('rTime').value||dt.time;
+  let subjScores={}; subjects.forEach((s,i)=>{subjScores[s]=document.getElementById('tot'+i).value||0;});
+  results.push({code,name,class:document.getElementById('rClass').value,avg:calc.avg,total:calc.total,grade:calc.grade,date:customDate,time:customTime,fullDate:dt.fullDate,fullTime:dt.fullTime,fullDateTime:dt.fullDateTime,timestamp:dt.iso,term:document.getElementById('rTerm').value,session:document.getElementById('rSession').value,position:document.getElementById('rPosition').value,teacher:document.getElementById('rTeacher').value,scores:subjScores});
+  localStorage.setItem(getKey('edu_results'),JSON.stringify(results));renderResults();renderFees();alert('Result saved! Code: '+code+' Date: '+dt.fullDateTime);
+}
+function renderResults(){
+  document.getElementById('resBody').innerHTML=results.slice().reverse().map(r=>`<tr><td>${r.code}</td><td>${r.name}</td><td>${r.class}</td><td>${r.avg}%</td><td>${r.grade}</td><td>${r.term}</td><td>${r.session||''}</td><td>${r.position||''}</td><td>${r.date}</td><td>${r.time}</td><td><button class="m on" onclick="generatePDF('${r.code}')">PDF</button></td></tr>`).join('');
+  document.getElementById('resCount').innerText=results.length;
+}
+function clearResults(){if(confirm('Clear results for '+campus+'?')){results=[];localStorage.setItem(getKey('edu_results'),JSON.stringify(results));renderResults();renderFees();}}
+function genID(){
+  document.getElementById('idFrontName').innerText=document.getElementById('idName').value||'Full Name';
+  document.getElementById('idFrontClass').innerText='Class: '+(document.getElementById('idClass').value||'-');
+  document.getElementById('idFrontCode').innerText='ID: '+(document.getElementById('idID').value||'EV-'+Math.floor(1000+Math.random()*9000));
+  document.getElementById('idFrontBlood').innerText='Blood: '+(document.getElementById('idBlood').value||'-');
+  let dt=getNowDateTime(); let customDate=document.getElementById('idDate').value||dt.date; let customTime=document.getElementById('idTime').value||dt.time;
+  document.getElementById('idFrontDate').innerText='Date: '+customDate+' | Time: '+customTime;
+  document.getElementById('idBackDate').innerText=customDate; document.getElementById('idBackTime').innerText=customTime;
+  document.getElementById('idBackFullDate').innerText=dt.fullDateTime;
+  document.getElementById('idCardYear').innerText=document.getElementById('idExpiry').value||'2025/2026';
+}
+async function downloadID(){
+  let el=document.getElementById('idCardDiv');
+  try{ let canvas=await html2canvas(el,{scale:2}); let link=document.createElement('a'); link.download='ID_Front_'+(document.getElementById('idName').value||'student')+'_'+getNowDateTime().date+'.png'; link.href=canvas.toDataURL('image/png'); link.click(); }catch(e){alert('Error: '+e.message);}
+}
+async function downloadIDBack(){
+  let el=document.getElementById('idCardBackDiv');
+  try{ let canvas=await html2canvas(el,{scale:2}); let link=document.createElement('a'); link.download='ID_Back_'+(document.getElementById('idName').value||'student')+'_'+getNowDateTime().date+'.png'; link.href=canvas.toDataURL('image/png'); link.click(); }catch(e){alert('Error: '+e.message);}
+}
+async function generatePDF(code){
+  try{
+    let r=code?results.find(x=>x.code===code):results[results.length-1];if(!r){alert('Save result first');return;}
+    const {jsPDF}=window.jspdf; let doc=new jsPDF();
+    doc.setFontSize(16); doc.text('EDUVERSE ACADEMY - RESULT SHEET',20,20);
+    doc.setFontSize(11); doc.text(`Name: ${r.name}`,20,30); doc.text(`Class: ${r.class} | Term: ${r.term} | Session: ${r.session}`,20,36); doc.text(`Code: ${r.code} | Position: ${r.position} | Teacher: ${r.teacher||''}`,20,42); doc.text(`Total: ${r.total} | Avg: ${r.avg}% | Grade: ${r.grade} | Date: ${r.date} | Time: ${r.time}`,20,48);
+    doc.text('Subjects:',20,56); let y=62; for(let sub in r.scores){ doc.text(`${sub}: ${r.scores[sub]}`,20,y); y+=6; if(y>270){doc.addPage(); y=20;}}
+    doc.text(`Generated: ${r.fullDateTime||getNowDateTime().fullDateTime} | Verify: www.eduverse.com.ng/verify/${r.code}`,20,y+8);
+    doc.text(`Powered by EduVerse - OPay 9027398199 - +2348050394277 - DateTime: ${getNowDateTime().fullDateTime}`,20,y+14);
+    doc.save(`${r.name}_Result_${r.code}_${r.date}_${r.time.replace(':','-')}.pdf`);
+  }catch(e){alert('PDF error: '+e.message);}
+}
+function sendNoticeWA(){
+  let t=document.getElementById('noticeText').value; if(!t){alert('Type notice');return;}
+  let dt=getNowDateTime(); let d=document.getElementById('noticeDate').value||dt.date; let tm=document.getElementById('noticeTime').value||dt.time; let cls=document.getElementById('noticeClass').value;
+  let full=`📢 NOTICE - ${cls}\nDate: ${d} Time: ${tm}\n\n${t}\n\nSent via EduVerse - www.eduverse.com.ng - ${dt.fullDateTime}`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(full)}`,'_blank');
+}
+function sendNoticeSMS(){let t=document.getElementById('noticeText').value; let dt=getNowDateTime(); let full=`${t}\nDate: ${dt.fullDateTime}`; navigator.clipboard.writeText(full); alert('Copied with DateTime! Paste to WhatsApp groups');}
+let timetables=JSON.parse(localStorage.getItem(getKey('edu_tt'))||'[]');
+function saveTT(){
+  let cls=document.getElementById('ttClass').value,day=document.getElementById('ttDay').value,data=document.getElementById('ttData').value,date=document.getElementById('ttDate').value||getNowDateTime().date;
+  if(!data){alert('Enter timetable');return;}
+  let dt=getNowDateTime();
+  timetables.push({class:cls,day,data,date,fullDateTime:dt.fullDateTime,timestamp:dt.iso});
+  localStorage.setItem(getKey('edu_tt'),JSON.stringify(timetables)); alert('Timetable saved with Date: '+date); document.getElementById('ttData').value=''; viewTT();
+}
+function viewTT(){document.getElementById('ttView').innerHTML=timetables.slice().reverse().map(t=>`<div style="border:1px solid #ddd;padding:8px;margin:6px 0;border-radius:8px"><b>${t.class} - ${t.day} | Date: ${t.date}</b><br><small style="font-size:9px">${t.fullDateTime||''}</small><br>${t.data.replace(/\n/g,'<br>')}</div>`).join('')||'No timetable yet - Add with date';}
+function backupData(){
+  let dt=getNowDateTime();
+  let fileName=`EduVerse_${campus}_${dt.date}_${dt.time.replace(':','-')}-${new Date().getSeconds()}.json`;
+  let data={att,fees,results,timetables,campus,backupDate:dt.fullDate,backupTime:dt.fullTime,backupFullDateTime:dt.fullDateTime,timestamp:dt.iso,exportedBy:localStorage.getItem('schoolEmail')||''};
+  let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fileName;a.click();
+  localStorage.setItem('lastBackup',dt.fullDateTime);
+  let lb=document.getElementById('lastBackup'); if(lb) lb.innerText=dt.fullDateTime;
+  let db=document.getElementById('dataDateTime'); if(db) db.innerText=dt.fullDateTime;
+}
+function restoreData(inp){
+  let f=inp.files[0]; if(!f)return;
+  let reader=new FileReader(); reader.onload=e=>{try{let d=JSON.parse(e.target.result); if(d.att){localStorage.setItem(getKey('edu_attendance'),JSON.stringify(d.att));} if(d.fees){localStorage.setItem(getKey('edu_fees'),JSON.stringify(d.fees));} if(d.results){localStorage.setItem(getKey('edu_results'),JSON.stringify(d.results));} if(d.timetables){localStorage.setItem(getKey('edu_tt'),JSON.stringify(d.timetables));} alert('Restored successfully! Backup Date: '+(d.backupFullDateTime||'unknown')+' - Reloading...'); location.reload();}catch(err){alert('Invalid backup file: '+err.message);}}; reader.readAsText(f);
+}
+function exportCSV(type){
+  let dt=getNowDateTime(); let rows=[]; let filename='';
+  if(type==='fees'){rows=[['Name','Class','Term','Total','Paid','Balance','Method','Receipt','Date','Time','FullDateTime','Timestamp']]; fees.forEach(f=>rows.push([f.name,f.class,f.term,f.total,f.paid,f.balance,f.method||'',f.receipt||'',f.date,f.time,f.fullDateTime||'',f.timestamp||''])); filename=`EduVerse_Fees_${campus}_${dt.date}.csv`;}
+  else if(type==='attendance'){rows=[['Name','Class','Type','Status','Date','Time','Session','Phone','FullDateTime','Timestamp']]; att.forEach(a=>rows.push([a.name,a.class,a.type,a.status,a.date,a.time,a.session||'',a.phone||'',a.fullDateTime||'',a.timestamp||''])); filename=`EduVerse_Attendance_${campus}_${dt.date}.csv`;}
+  else if(type==='results'){rows=[['Code','Name','Class','Avg','Grade','Term','Session','Position','Date','Time','FullDateTime']]; results.forEach(r=>rows.push([r.code,r.name,r.class,r.avg,r.grade,r.term,r.session||'',r.position||'',r.date,r.time,r.fullDateTime||''])); filename=`EduVerse_Results_${campus}_${dt.date}.csv`;}
+  let csv=rows.map(r=>r.map(v=>`"${(v||'').toString().replace(/"/g,'""')}"`).join(',')).join('\n');
+  let blob=new Blob([csv],{type:'text/csv'}); let a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=filename; a.click();
+}
 function toggleDark(){document.body.classList.toggle('dark');}
 let campuses=JSON.parse(localStorage.getItem('edu_campuses')||'["Main Campus"]');
-function renderCampus(){let sel=document.getElementById('campusSel');if(sel)sel.innerHTML=campuses.map(c=>`<option ${c===campus?'selected':''}>${c}</option>`).join('');}
-function addCampus(){let v=document.getElementById('newCampus').value.trim();if(!v)return;campuses.push(v);localStorage.setItem('edu_campuses',JSON.stringify(campuses));renderCampus();}
-function switchCampus(){localStorage.setItem('edu_campus',document.getElementById('campusSel').value);location.reload();}
-function drawChart(){try{let ctx=document.getElementById('perfChart');if(!ctx)return;let labels=results.slice(-6).map(r=>r.name.substring(0,6));let data=results.slice(-6).map(r=>parseFloat(r.avg)||0);if(!labels.length){ctx.style.display='none';return;}ctx.style.display='block';if(window.myChart)window.myChart.destroy();window.myChart=new Chart(ctx,{type:'bar',data:{labels,[STRIPPED] %',data,backgroundColor:'#4f46e5'}]},options:{responsive:true,plugins:{legend:{display:false}}}});}catch(e){}}
-renderAtt();renderFees();renderResults();renderCampus();setTimeout(drawChart,500);
+function renderCampus(){let sel=document.getElementById('campusSel'); if(sel){sel.innerHTML=campuses.map(c=>`<option ${c===campus?'selected':''}>${c}</option>`).join('');}}
+function addCampus(){let v=document.getElementById('newCampus').value.trim(); if(!v){alert('Enter campus name');return;} if(campuses.includes(v)){alert('Campus exists');return;} campuses.push(v); localStorage.setItem('edu_campuses',JSON.stringify(campuses)); renderCampus(); document.getElementById('newCampus').value=''; alert('Campus added: '+v+' at '+getNowDateTime().fullDateTime);}
+function switchCampus(){let v=document.getElementById('campusSel').value; localStorage.setItem('edu_campus',v); location.reload();}
+function drawChart(){try{let ctx=document.getElementById('perfChart'); if(!ctx) return; let labels=results.slice(-6).map(r=>r.name?r.name.substring(0,8):'Stu'); let data=results.slice(-6).map(r=>parseFloat(r.avg)||0); if(!labels.length){ctx.style.display='none';return;} ctx.style.display='block'; if(window.myChart) window.myChart.destroy(); window.myChart=new Chart(ctx,{type:'bar',data:{labels,[STRIPPED] %',data,backgroundColor:'#4f46e5',borderRadius:6}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,max:100}}}});}catch(e){console.log('chart err',e);}}
+renderAtt();renderFees();renderResults();renderCampus();viewTT();setTimeout(drawChart,600);
+let lb=localStorage.getItem('lastBackup'); if(lb){let el=document.getElementById('lastBackup'); if(el) el.innerText=lb;}
+let dd=document.getElementById('dataDateTime'); if(dd) dd.innerText=getNowDateTime().fullDateTime;
+let md=document.getElementById('marketDate'); if(md) md.innerText=getNowDateTime().fullDate;
 </script>
+
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import{getAuth,onAuthStateChanged,signInWithEmailAndPassword,createUserWithEmailAndPassword,signOut}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import{getFirestore,doc,getDoc,setDoc}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 const firebaseConfig={apiKey:"AIzaSyBu37fV7AVatgXsA9YVbJQHELEMeCAfBhA",authDomain:"eduverse-a1d66.firebaseapp.com",projectId:"eduverse-a1d66",storageBucket:"eduverse-a1d66.firebasestorage.app",messagingSenderId:"657029326378",appId:"1:657029326378:web:662a4302b2a6f8af5e0553"};
 const app=initializeApp(firebaseConfig);const auth=getAuth(app);const db=getFirestore(app);
-let mode='login';
-window.toggleAuthMode=()=>{mode=mode==='login'?'register':'login';document.getElementById('authName').style.display=mode==='register'?'block':'none';document.getElementById('regBtn').style.display=mode==='register'?'block':'none';document.getElementById('loginBtn').style.display=mode==='register'?'none':'block';}
-window.doLogin=async()=>{let e=document.getElementById('authEmail').value.trim(),p=document.getElementById('authPass').value.trim();if(!e||!p)return;try{await signInWithEmailAndPassword(auth,e,p);}catch(err){document.getElementById('authMsg').innerText=err.message;}};
-window.doRegister=async()=>{let e=document.getElementById('authEmail').value.trim(),p=document.getElementById('authPass').value.trim(),n=document.getElementById('authName').value.trim();if(!e||!p||!n)return;try{let cred=await createUserWithEmailAndPassword(auth,e,p);let exp=new Date();exp.setDate(exp.getDate()+3);let rec={name:n,schoolName:n,email:e,pin:p,createdAt:new Date().toISOString(),expiryDate:exp.toISOString(),status:'active'};await setDoc(doc(db,"students",cred.user.uid),rec);await setDoc(doc(db,"students",e.toLowerCase()),rec);}catch(err){document.getElementById('authMsg').innerText=err.message;}};
-window.doLogout=async()=>{try{await signOut(auth);}catch(e){}location.reload();};
+window.toggleAuthMode=()=>{let m=document.getElementById('authName').style.display;let isHidden=m==='none'||m==='';document.getElementById('authName').style.display=isHidden?'block':'none';document.getElementById('regBtn').style.display=isHidden?'block':'none';document.getElementById('loginBtn').style.display=isHidden?'none':'block';document.getElementById('authTitle').innerText=isHidden?'🎓 Register New School':'🎓 School Login';document.getElementById('toggleBtn').innerText=isHidden?'Already have account? Login':'New School? Register Here';}
+window.doLogin=async()=>{let e=document.getElementById('authEmail').value.trim(),p=document.getElementById('authPass').value.trim();if(!e||!p){alert('Enter email & PIN');return;}try{await signInWithEmailAndPassword(auth,e,p);localStorage.setItem('schoolEmail',e);}catch(err){document.getElementById('authMsg').innerText=err.message;}};
+window.doRegister=async()=>{let e=document.getElementById('authEmail').value.trim(),p=document.getElementById('authPass').value.trim(),n=document.getElementById('authName').value.trim();if(!e||!p||!n){alert('Fill all fields');return;}try{let cred=await createUserWithEmailAndPassword(auth,e,p);let exp=new Date();exp.setDate(exp.getDate()+3);let rec={name:n,schoolName:n,email:e,pin:p,createdAt:new Date().toISOString(),expiryDate:exp.toISOString(),status:'active',campus:'Main Campus'};await setDoc(doc(db,"students",cred.user.uid),rec);await setDoc(doc(db,"students",e.toLowerCase()),rec);localStorage.setItem('schoolName',n);localStorage.setItem('schoolEmail',e);alert('Account created! 3 days free trial started at '+new Date().toLocaleString('en-NG'));}catch(err){document.getElementById('authMsg').innerText=err.message;}};
+window.doLogout=async()=>{try{await signOut(auth);}catch(e){} localStorage.removeItem('schoolEmail'); location.reload();};
 onAuthStateChanged(auth,async(u)=>{
  const overlay=document.getElementById('authOverlay');const dc=document.getElementById('dc');
  if(!u){overlay.style.display='flex';return} overlay.style.display='none';
  try{
-  let snap=await getDoc(doc(db,"students",u.uid));let snap2=await getDoc(doc(db,"students",u.email.toLowerCase()));
+  const snap=await getDoc(doc(db,"students",u.uid));let snap2=null;try{snap2=await getDoc(doc(db,"students",u.email.toLowerCase()));}catch(e){}
   let data=snap.exists()?snap.data():(snap2&&snap2.exists()?snap2.data():null);
-  let name=data?.name||data?.schoolName||u.email; let exp=data?.expiryDate?new Date(data.expiryDate):null;
-  if(exp){
-    let diff=Math.ceil((exp-new Date())/(1000*60*60*24));
-    if(diff<=0){dc.innerHTML=`<div style="text-align:center;background:#fee2e2;color:#991b1b;padding:12px;border-radius:12px"><h2>🔒 EXPIRED</h2><p>OPay 9027398199<br><button class="btn btn-g" onclick="window.open('https://wa.me/2348050394277?text=Paid','_blank')">Send Proof</button></p></div>`;return;}
-    dc.innerHTML=`<h2>Welcome, ${name} <span style="background:#dcfce7;color:#166534;padding:4px 10px;border-radius:20px;font-size:11px">✅ ${diff} days left</span></h2><p style="font-size:11px">Valid till ${exp.toLocaleDateString()} | OPay 9027398199</p>`;
-  } else {dc.innerHTML=`<h2>Welcome, ${name} ✅</h2>`;}
- }catch(e){dc.innerHTML=`<h2>Welcome ✅</h2>`;}
+  let name=localStorage.getItem('schoolName')||u.email||'School'; let expiry=''; let status='active'; let created='';
+  if(data){name=data.name||data.schoolName||name;expiry=data.expiryDate||'';status=data.status||'active';created=data.createdAt||'';localStorage.setItem('schoolName',name);localStorage.setItem('schoolEmail',data.email||u.email);}
+  let now=new Date();let expDate=expiry?new Date(expiry):null; if(!expDate && created){let cd=new Date(created);let te=new Date(cd);te.setDate(te.getDate()+3);expDate=te;}
+  if(expDate && now>expDate || status==='blocked'){
+    dc.innerHTML=`<div style="text-align:center;padding:15px;background:#fee2e2;color:#991b1b;border-radius:12px"><h2>${status==='blocked'?'⛔ BLOCKED BY ADMIN':'🔒 SUBSCRIPTION EXPIRED'}</h2><p>Expired: ${expDate?expDate.toLocaleDateString('en-NG'):''} at ${expDate?expDate.toLocaleTimeString('en-NG'):''}</p><div style="background:#fff;color:#111;padding:12px;border-radius:10px;margin-top:10px;text-align:left"><b>Pay to Unlock Instantly:</b><br><div style="margin-top:8px;background:#f6f7ff;padding:10px;border-radius:8px"><b>OPay: 9027398199</b><br>Aminat Adeshewa Olohunwa<br>₦15k / 30 days | ₦40k / 90 days | ₦50k / Year<br>After payment, WhatsApp proof to +2348050394277<br>Date: ${now.toLocaleString('en-NG')}</div><div style="margin-top:10px;text-align:center"><button onclick="window.open('https://wa.me/2348050394277?text='+encodeURIComponent('Hello, I paid for EduVerse '+(localStorage.getItem('schoolEmail')||u.email)+' at '+new Date().toLocaleString('en-NG')+' - Please activate'),'_blank')" style="width:100%;padding:12px;background:#25D366;color:#fff;border:none;border-radius:8px;font-weight:900;font-size:13px">📲 Send Payment Proof on WhatsApp with DateTime</button></div></div></div>`;
+    document.querySelectorAll('section:not(#dash):not(#terms):not(#privacy):not(#market)').forEach(s=>{s.innerHTML=`<div class="card" style="text-align:center"><h2>🔒 LOCKED - EXPIRED at ${now.toLocaleString('en-NG')}</h2><p>Pay ₦15k to OPay 9027398199<br>WhatsApp +2348050394277<br><button class="btn btn-g" onclick="window.open('https://wa.me/2348050394277?text=Paid+for+EduVerse+at+${encodeURIComponent(now.toLocaleString('en-NG'))}','_blank')">Send Proof with DateTime</button></p></div>`;});
+    return;
+  }
+  if(expDate){
+    let diff=Math.ceil((expDate-now)/(1000*60*60*24));
+    let badge=diff<=5?`<span style="background:#fef3c7;color:#92400e;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:800">⚠️ ${diff} days left</span>`:`<span style="background:#dcfce7;color:#166534;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:800">✅ ${diff} days left</span>`;
+    dc.innerHTML=`<h2>Welcome, ${name} ${badge}</h2><p style="font-size:11px;margin-top:6px">Valid till ${expDate.toLocaleDateString('en-NG')} ${expDate.toLocaleTimeString('en-NG')} | Campus: ${campus} | DateTime: ${now.toLocaleString('en-NG')} | www.eduverse.com.ng | OPay 9027398199</p><div style="font-size:10px;margin-top:8px"><span onclick="showPage('terms')" style="color:#fff;text-decoration:underline;cursor:pointer">Terms</span> | <span onclick="showPage('privacy')" style="color:#fff;text-decoration:underline;cursor:pointer">Privacy</span> | <span onclick="showPage('market')" style="color:#fff;text-decoration:underline;cursor:pointer">🚀 Market Kit</span> | <span onclick="showPage('data')" style="color:#fff;text-decoration:underline;cursor:pointer">Backup with DateTime</span></div>`;
+    return;
+  }
+  dc.innerHTML=`<h2>Welcome, ${name} ✅ Free Trial Active at ${now.toLocaleString('en-NG')}</h2><p style="font-size:11px">www.eduverse.com.ng | Support +2348050394277 | OPay 9027398199 | DateTime: ${now.toLocaleString('en-NG')}</p>`;
+ }catch(e){ dc.innerHTML=`<h2>Welcome ✅</h2><p style="font-size:10px">${e.message} | ${new Date().toLocaleString('en-NG')}</p>`; }
 });
 </script>
 </body></html>
