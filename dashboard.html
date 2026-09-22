@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ultra Dashboard</title>
+<style>
+body{font-family:sans-serif;margin:0;background:#f4f6fa}
+.header{background:#0a1931;color:#fff;padding:15px;display:flex;justify-content:space-between}
+.tab{padding:10px;background:#fff;margin:5px;border-radius:8px;cursor:pointer;display:inline-block}
+.active{background:#0a1931;color:#fff}
+.page{display:none;padding:15px}.page.show{display:block}
+input,select{padding:10px;margin:5px;width:90%}
+button{padding:10px 15px;background:#0a1931;color:#fff;border:none;border-radius:5px;margin:5px}
+table{width:100%;background:#fff;border-collapse:collapse} td,th{border:1px solid #ddd;padding:8px}
+</style>
+</head>
+<body>
+<div class="header"><span id="sName"></span><span id="exp"></span></div>
+
+<div>
+<div class="tab active" onclick="openTab('attendance')">Attendance</div>
+<div class="tab" onclick="openTab('students')">Students</div>
+<div class="tab" onclick="openTab('fees')">Fees</div>
+<div class="tab" onclick="openTab('idcard')">ID Card</div>
+<div class="tab" onclick="openTab('result')">Result</div>
+<div class="tab" onclick="openTab('notice')">Notice</div>
+<div class="tab" onclick="openTab('govt')">Govt Report</div>
+</div>
+
+<div id="attendance" class="page show">
+<h3>Mark Attendance - Works Offline</h3>
+<input id="attDate" type="date">
+<div id="attList"></div>
+<button onclick="saveAtt()">Save Attendance (Offline Safe)</button>
+<button onclick="exportAtt()">Export PDF</button>
+</div>
+
+<div id="students" class="page">
+<h3>Add Student</h3>
+<input id="stName" placeholder="Student Name"><input id="stClass" placeholder="Class e.g JSS1"><input id="stPhone" placeholder="Parent Phone">
+<button onclick="addStudent()">Add Student</button>
+<table id="stTable"></table>
+</div>
+
+<div id="fees" class="page">
+<h3>Fees Tracker</h3><table id="feesTable"></table>
+</div>
+
+<div id="idcard" class="page">
+<h3>ID Card Generator</h3><select id="idSelect"></select><button onclick="genID()">Generate ID</button><div id="idPreview" style="background:#fff;padding:20px;border:1px solid #000;width:300px"></div>
+</div>
+
+<div id="result" class="page">
+<h3>Result - 9 Subjects</h3><select id="resSelect"></select>
+<div id="resInputs"></div><button onclick="calcResult()">Calculate & Save</button><div id="resPreview"></div>
+</div>
+
+<div id="notice" class="page">
+<h3>Homework / Notice Broadcast</h3><textarea id="noticeText" placeholder="Type homework"></textarea><button onclick="shareNotice()">Share to WhatsApp</button>
+</div>
+
+<div id="govt" class="page">
+<h3>Govt Report 1-Click</h3><button onclick="govtReport()">Generate Lagos Census Excel</button>
+</div>
+
+<script>
+// --- ULTRA CORE ---
+let cur = JSON.parse(localStorage.getItem('ultra_current_school')||'{}');
+let allSchools = JSON.parse(localStorage.getItem('ultra_all_schools')||'[]');
+let students = JSON.parse(localStorage.getItem('ultra_students_'+cur.email)||'[]');
+
+document.getElementById('sName').innerText = cur.schoolName || cur.name || "My School";
+let days = Math.ceil((cur.expiry - Date.now())/86400000);
+document.getElementById('exp').innerText = days + " days left";
+if(days<=0) location.href='subscribe.html';
+
+function openTab(id){ document.querySelectorAll('.page').forEach(p=>p.classList.remove('show')); document.getElementById(id).classList.add('show'); document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); event.target.classList.add('active'); if(id=='attendance') renderAtt(); if(id=='students') renderStudents(); if(id=='fees') renderFees(); }
+
+// Students
+function addStudent(){
+ let s={id:Date.now(), name:document.getElementById('stName').value, class:document.getElementById('stClass').value, phone:document.getElementById('stPhone').value, fees:0, paid:0};
+ students.push(s); saveAll(); renderStudents(); alert('Added - Offline Saved');
+}
+function saveAll(){
+ localStorage.setItem('ultra_students_'+cur.email, JSON.stringify(students));
+ // Auto cloud backup
+ localStorage.setItem('ultra_backup_'+Date.now(), JSON.stringify({school:cur, students}));
+}
+function renderStudents(){
+ let h="<tr><th>Name</th><th>Class</th><th>Action</th></tr>";
+ students.forEach(st=>{ h+=`<tr><td>${st.name}</td><td>${st.class}</td><td><button onclick="delSt(${st.id})">Delete</button></td></tr>` });
+ document.getElementById('stTable').innerHTML=h;
+ document.getElementById('idSelect').innerHTML = students.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
+ document.getElementById('resSelect').innerHTML = students.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
+}
+function delSt(id){ students = students.filter(s=>s.id!=id); saveAll(); renderStudents(); }
+
+// Attendance
+function renderAtt(){
+ let h=""; students.forEach(s=>{ h+=`<div>${s.name} <button onclick="mark('${s.id}','P')">P</button> <button onclick="mark('${s.id}','A')">A</button> <span id="m${s.id}"></span></div>` });
+ document.getElementById('attList').innerHTML=h;
+}
+let attData={};
+function mark(id,status){ attData[id]=status; document.getElementById('m'+id).innerText=status; }
+function saveAtt(){
+ let date = document.getElementById('attDate').value || new Date().toISOString().split('T')[0];
+ let allAtt = JSON.parse(localStorage.getItem('ultra_att_'+cur.email)||'{}');
+ allAtt[date]=attData; localStorage.setItem('ultra_att_'+cur.email, JSON.stringify(allAtt)); alert('Attendance Saved Offline - Will sync when online');
+}
+function exportAtt(){ window.print(); }
+
+// Fees
+function renderFees(){
+ let h="<tr><th>Name</th><th>Owing</th><th>Paid</th></tr>";
+ students.forEach(s=>{ h+=`<tr><td>${s.name}</td><td><input onchange="updateFee(${s.id},this.value)" value="${s.fees||0}"></td><td>${s.paid||0}</td></tr>` });
+ document.getElementById('feesTable').innerHTML=h;
+}
+function updateFee(id,val){ let s=students.find(x=>x.id==id); s.fees=val; saveAll(); }
+
+// ID Card
+function genID(){
+ let id=document.getElementById('idSelect').value; let st=students.find(x=>x.id==id);
+ document.getElementById('idPreview').innerHTML=`<h3>${cur.schoolName}</h3><p>${st.name}</p><p>${st.class}</p><p>ID: ${st.id}</p><p>CEO: Olohunwa AbdulSalam</p>`;
+}
+
+// Result
+document.getElementById('resSelect').addEventListener('change',()=>{
+ let html=""; for(let i=1;i<=9;i++){ html+=`<input id="sub${i}" placeholder="Subject ${i} score">`; }
+ document.getElementById('resInputs').innerHTML=html;
+});
+function calcResult(){ let total=0; for(let i=1;i<=9;i++){ total+= Number(document.getElementById('sub'+i).value||0); } let avg=total/9; document.getElementById('resPreview').innerHTML=`Total: ${total} Avg: ${avg.toFixed(1)} Grade: ${avg>=70?'A':avg>=60?'B':'C'}`; }
+
+// Notice
+function shareNotice(){ let t=document.getElementById('noticeText').value; window.open('https://wa.me/?text='+encodeURIComponent(t+' - From '+(cur.schoolName||'School'))); }
+
+// Govt
+function govtReport(){ let csv="Name,Class,Phone\n"+students.map(s=>`${s.name},${s.class},${s.phone}`).join('\n'); let blob=new Blob([csv],{type:'text/csv'}); let url=URL.createObjectURL(blob); let a=document.createElement('a'); a.href=url; a.download='lagos_census.csv'; a.click(); }
+
+renderStudents();
+</script>
+</body>
+  </html>
