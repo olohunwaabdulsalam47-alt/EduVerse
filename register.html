@@ -1,34 +1,59 @@
-<input id="schoolName" placeholder="School Name">
-<input id="email" placeholder="Email">
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Ultra Account</title>
+<style>
+body{font-family:sans-serif;background:#f4f6fa;margin:0;padding:20px;display:flex;justify-content:center}
+.card{background:#fff;width:100%;max-width:400px;padding:25px;border-radius:15px;box-shadow:0 5px 20px rgba(0,0,0,0.1)}
+h2{text-align:center;color:#0a1931}
+input{width:100%;padding:14px;margin:10px 0;border:1px solid #ddd;border-radius:10px;box-sizing:border-box;font-size:16px}
+button{width:100%;padding:15px;background:#0a1931;color:#fff;border:none;border-radius:10px;font-size:18px;font-weight:bold;margin-top:10px}
+.small{text-align:center;margin-top:15px;font-size:14px}
+</style>
+</head>
+<body>
+<div class="card">
+<h2>Create Ultra Account</h2>
+<input id="schoolName" placeholder="School Name - e.g مركز السلام">
+<input id="email" placeholder="Email - e.g olohunwa...@gmail.com">
 <input id="phone" placeholder="Phone - 09027398199">
-<input id="branches" placeholder="How many branches? e.g 1">
-<button id="regBtn">Create Ultra Account</button>
+<input id="branches" placeholder="How many branches? e.g 1" type="number" value="1">
+<button id="regBtn">Create Ultra Account →</button>
+<div class="small">Already have account? <a href="login.html">Login</a></div>
+</div>
 
 <script type="module">
 import { db } from './firebase-config.js';
 import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
 document.getElementById('regBtn').onclick = async () => {
+  const nameVal = document.getElementById('schoolName').value.trim();
+  const emailVal = document.getElementById('email').value.trim();
+  if(!nameVal || !emailVal) return alert('Fill school name and email');
+  
   const data = {
-    schoolName: document.getElementById('schoolName').value.trim(),
-    name: document.getElementById('schoolName').value.trim(), // DUAL SAVE - Fix undefined forever
-    school_name: document.getElementById('schoolName').value.trim(),
-    email: document.getElementById('email').value.trim(),
+    schoolName: nameVal,
+    name: nameVal,
+    school_name: nameVal,
+    email: emailVal,
     phone: document.getElementById('phone').value.trim(),
     branches: document.getElementById('branches').value || 1,
-    expiry: Date.now() + (30*24*60*60*1000), // 30 days trial
-    createdAt: Date.now(),
-    students: []
+    expiry: Date.now() + (30*24*60*60*1000),
+    createdAt: Date.now()
   };
-  // Save OFFLINE FIRST (ULTRA Power)
+
+  // ULTRA OFFLINE FIRST
   localStorage.setItem('ultra_current_school', JSON.stringify(data));
-  localStorage.setItem('ultra_offline_backup', JSON.stringify(data));
+  let all = JSON.parse(localStorage.getItem('ultra_all_schools')||'[]');
+  all.push(data);
+  localStorage.setItem('ultra_all_schools', JSON.stringify(all));
   
-  // Then try cloud
-  try{
-    await setDoc(doc(db, "schools", data.email), data);
-  }catch(e){ console.log("Offline saved, will sync later"); }
+  try{ await setDoc(doc(db, "schools", data.email), data); }catch(e){}
   
+  alert('Account Created! Welcome to ULTRA');
   location.href='dashboard.html';
 }
-    </script>
+</script>
+</body>
+</html>
