@@ -1,0 +1,34 @@
+<input id="schoolName" placeholder="School Name">
+<input id="email" placeholder="Email">
+<input id="phone" placeholder="Phone - 09027398199">
+<input id="branches" placeholder="How many branches? e.g 1">
+<button id="regBtn">Create Ultra Account</button>
+
+<script type="module">
+import { db } from './firebase-config.js';
+import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+document.getElementById('regBtn').onclick = async () => {
+  const data = {
+    schoolName: document.getElementById('schoolName').value.trim(),
+    name: document.getElementById('schoolName').value.trim(), // DUAL SAVE - Fix undefined forever
+    school_name: document.getElementById('schoolName').value.trim(),
+    email: document.getElementById('email').value.trim(),
+    phone: document.getElementById('phone').value.trim(),
+    branches: document.getElementById('branches').value || 1,
+    expiry: Date.now() + (30*24*60*60*1000), // 30 days trial
+    createdAt: Date.now(),
+    students: []
+  };
+  // Save OFFLINE FIRST (ULTRA Power)
+  localStorage.setItem('ultra_current_school', JSON.stringify(data));
+  localStorage.setItem('ultra_offline_backup', JSON.stringify(data));
+  
+  // Then try cloud
+  try{
+    await setDoc(doc(db, "schools", data.email), data);
+  }catch(e){ console.log("Offline saved, will sync later"); }
+  
+  location.href='dashboard.html';
+}
+    </script>
